@@ -264,7 +264,14 @@
       height: 94%;
     }
 
-    /* 答對與錯誤提示狀態 */
+    /* 認識階段點擊高亮狀態（無煙花干擾） */
+    .choice-card.learn-active {
+      border-color: #00D4FF !important;
+      box-shadow: 0 0 36px rgba(0, 212, 255, 0.9);
+      transform: scale(1.03);
+    }
+
+    /* 測驗階段答對與錯誤提示狀態 */
     .choice-card.correct-hit {
       border-color: #00FF00 !important;
       box-shadow: 0 0 40px rgba(0, 255, 0, 0.85);
@@ -1141,12 +1148,12 @@
         </div>
       </div>
 
-      <!-- 2. 學習與選辦階段模式（新增階段 0：認識圖片） -->
+      <!-- 2. 學習與選辦階段模式 -->
       <div class="setting-group">
         <label>2. 此學生的學習與選辦階段（先認識圖片再進階選辦）</label>
         <div class="btn-group" data-setting="stageMode">
           <button class="opt-btn active" data-val="auto">自動進階（認識圖片 → 一選一 → 二選一 → 三選一）</button>
-          <button class="opt-btn" data-val="0">固定：認識圖片（按相片讀出名稱）</button>
+          <button class="opt-btn" data-val="0">固定：認識圖片（一按相片直接讀出名詞）</button>
           <button class="opt-btn" data-val="1">固定：一選一（建立指認因果）</button>
           <button class="opt-btn" data-val="2">固定：二選一（左右兩端分開大卡片）</button>
           <button class="opt-btn" data-val="3">固定：三選一（三張分開視覺搜尋）</button>
@@ -1226,7 +1233,7 @@
         themes: createDefaultThemes(),
         settings: {
           stageMode: 'auto',
-          currentChoices: 0, // 預設從「認識圖片」開始，按過 3 張後自動進階一選一 → 二選一 → 三選一
+          currentChoices: 0,
           streakAtLevel: 0,
           showText: true,
           theme: 'dark',
@@ -1459,20 +1466,17 @@
 
     function playLearnTapSound() {
       if (!audioCtx) return;
-      const notes = [587.33, 880.00];
-      notes.forEach((freq, idx) => {
-        const now = audioCtx.currentTime + idx * 0.08;
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(freq, now);
-        gain.gain.setValueAtTime(0.20, now);
-        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
-        osc.connect(gain);
-        gain.connect(audioCtx.destination);
-        osc.start(now);
-        osc.stop(now + 0.35);
-      });
+      const now = audioCtx.currentTime;
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(660, now);
+      gain.gain.setValueAtTime(0.14, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.18);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start(now);
+      osc.stop(now + 0.18);
     }
 
     function playGentleNudgeSound() {
@@ -1540,7 +1544,7 @@
       if (cantoneseVoice) {
         utter.voice = cantoneseVoice;
       }
-      utter.rate = 0.90;
+      utter.rate = 0.88;
       utter.pitch = pitch;
       window.speechSynthesis.speak(utter);
     }
@@ -1599,7 +1603,7 @@
         s.currentChoices = Number(s.stageMode);
       }
 
-      // === 模式 A：階段 0「認識圖片」（學生按圖片，系統讀出名稱） ===
+      // === 模式 A：階段 0「認識圖片」（一按圖片直接讀出該名詞，無讚好語） ===
       if (s.currentChoices === 0) {
         updateHeaderUI(0);
         const target = items[runtime.learnIndex % items.length];
@@ -1607,10 +1611,9 @@
         runtime.targetItem = target;
         runtime.lastTargetId = target.id;
 
-        promptBanner.textContent = '睇下呢個，撳一下聽下係乜嘢呀？';
-        speakCantonese('睇下呢個，撳一下聽下係乜嘢呀？', 1.12);
+        promptBanner.textContent = '撳一下圖片';
+        speakCantonese('撳一下圖片', 1.12);
 
-        // 認識階段一律顯示文字名稱，建立音、形、圖配對
         choicesGrid.className = 'choices-0';
         choicesGrid.innerHTML = '';
 
@@ -1682,7 +1685,7 @@
       });
     }
 
-    // === 處理「認識圖片」階段點擊：說出圖片名稱，認識 3 張後自動進入選辦 ===
+    // === 處理「認識圖片」階段點擊：直接說出該圖片名詞，不加讚美語 ===
     function handleLearnCardTap(cardEl, item) {
       if (runtime.isLocked || runtime.isPaused) return;
       runtime.isLocked = true;
@@ -1690,19 +1693,17 @@
       const profile = getActiveProfile();
       const s = profile.settings;
 
-      cardEl.classList.add('correct-hit');
-      const rect = cardEl.getBoundingClientRect();
-      spawnCelebrationParticles(rect.left + rect.width / 2, rect.top + rect.height / 2);
+      cardEl.classList.add('learn-active');
       playLearnTapSound();
-      if (navigator.vibrate) navigator.vibrate(60);
+      if (navigator.vibrate) navigator.vibrate(50);
 
-      promptBanner.textContent = `呢個係「${item.name}」呀！`;
-      speakCantonese(`呢個係${item.name}呀！`, 1.16);
+      // 畫面與語音都直接呈現純粹的名詞本身
+      promptBanner.textContent = item.name;
+      speakCantonese(item.name, 1.12);
 
       runtime.roundCompleted += 1;
       s.streakAtLevel += 1;
 
-      // 自動進階：認識 3 張圖片後，自動切換進入「階段 1：一選一」
       const learnTargetCount = Math.min(3, getActiveTheme().items.length);
       if (s.stageMode === 'auto' && s.streakAtLevel >= learnTargetCount) {
         s.currentChoices = 1;
@@ -1714,13 +1715,13 @@
       updateStatsUI();
 
       if (s.roundLimit > 0 && runtime.roundCompleted >= s.roundLimit) {
-        setTimeout(showRoundBreak, 1450);
+        setTimeout(showRoundBreak, 1350);
       } else {
-        setTimeout(generateQuestion, 1750);
+        setTimeout(generateQuestion, 1500);
       }
     }
 
-    // === 處理「選辦測驗」階段點擊卡片 ===
+    // === 處理「選辦測驗」階段點擊卡片：無論揀啱或揀錯，都清楚讀出所按圖片的名詞 ===
     function handleChoiceClick(cardEl, chosenItem) {
       if (runtime.isLocked || runtime.isPaused) return;
       if (cardEl.classList.contains('wrong-dimmed')) return;
@@ -1729,6 +1730,7 @@
       const s = profile.settings;
 
       if (chosenItem.id === runtime.targetItem.id) {
+        // 揀啱咗：讚賞後清楚讀出該圖片名詞兩次強化記憶
         runtime.isLocked = true;
         cardEl.classList.remove('hint-pulse');
         cardEl.classList.add('correct-hit');
@@ -1754,7 +1756,9 @@
         const praises = ['好叻喎！', '做得好！'];
         const praiseWord = praises[praiseToggle % praises.length];
         praiseToggle += 1;
-        speakCantonese(`${praiseWord}係${runtime.targetItem.name}呀！`, 1.18);
+
+        promptBanner.textContent = `${praiseWord}呢個係「${chosenItem.name}」呀！`;
+        speakCantonese(`${praiseWord}${chosenItem.name}！呢個係${chosenItem.name}呀！`, 1.18);
 
         if (s.stageMode === 'auto' && s.streakAtLevel >= 3 && s.currentChoices < 3) {
           s.currentChoices += 1;
@@ -1766,11 +1770,12 @@
         updateStatsUI();
 
         if (s.roundLimit > 0 && runtime.roundCompleted >= s.roundLimit) {
-          setTimeout(showRoundBreak, 1200);
+          setTimeout(showRoundBreak, 1650);
         } else {
-          setTimeout(generateQuestion, 1450);
+          setTimeout(generateQuestion, 1950);
         }
       } else {
+        // 揀錯咗：先讀出學生剛才撳嗰張圖片嘅名詞，再提醒要搵邊個
         runtime.isFirstTryThisQuestion = false;
         runtime.wrongAttemptsThisQuestion += 1;
         s.streakAtLevel = 0;
@@ -1778,7 +1783,8 @@
 
         cardEl.classList.add('wrong-dimmed');
         playGentleNudgeSound();
-        speakCantonese(`再試下啦，邊個係${runtime.targetItem.name}呀？`, 1.08);
+        promptBanner.textContent = `呢個係「${chosenItem.name}」呀！邊個係「${runtime.targetItem.name}」呀？`;
+        speakCantonese(`呢個係${chosenItem.name}呀！再試下啦，邊個係${runtime.targetItem.name}呀？`, 1.08);
 
         if (s.autoHint) {
           const correctCard = document.querySelector(`.choice-card[data-id="${runtime.targetItem.id}"]`);
@@ -1820,7 +1826,7 @@
       if (runtime.targetItem && !runtime.isPaused) {
         const s = getActiveProfile().settings;
         if (s.currentChoices === 0) {
-          speakCantonese(`呢個係${runtime.targetItem.name}呀！`, 1.15);
+          speakCantonese(runtime.targetItem.name, 1.12);
         } else {
           speakCantonese(`邊個係${runtime.targetItem.name}呀？`, 1.12);
         }

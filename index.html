@@ -139,9 +139,16 @@
       justify-content: center;
       gap: clamp(18px, 3.5vw, 44px);
       width: 100%;
-      max-width: 1280px;
+      max-width: 1380px;
       flex: 1;
       max-height: 68vh;
+    }
+
+    /* 二選一專用：明確拉開左右兩側距離，中間留出防誤觸安全空白區 */
+    #choices-grid.choices-2 {
+      justify-content: space-between;
+      padding: 0 clamp(24px, 6vw, 96px);
+      gap: clamp(64px, 14vw, 220px);
     }
 
     /* 圖片選擇卡片 */
@@ -167,8 +174,8 @@
     }
 
     .choices-2 .choice-card {
-      width: min(42vw, 390px);
-      height: min(54vh, 410px);
+      width: min(35vw, 360px);
+      height: min(52vh, 390px);
     }
 
     .choices-3 .choice-card {
@@ -252,7 +259,7 @@
       z-index: 60;
     }
 
-    /* 隱藏式教師按鈕（左上角長按 2 秒） */
+    /* 教師設定按鈕（左上角單按 1 下即開啟） */
     #teacher-trigger {
       position: fixed;
       top: 14px;
@@ -260,7 +267,8 @@
       width: 56px;
       height: 56px;
       border-radius: 50%;
-      background: rgba(80, 80, 85, 0.55);
+      background: rgba(80, 80, 85, 0.65);
+      border: 2px solid rgba(255, 255, 255, 0.25);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -268,27 +276,14 @@
       cursor: pointer;
     }
 
+    #teacher-trigger:active {
+      transform: scale(0.94);
+    }
+
     #teacher-trigger svg.gear-icon {
       width: 28px;
       height: 28px;
       fill: #FFFFFF;
-    }
-
-    #hold-ring {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 56px;
-      height: 56px;
-      transform: rotate(-90deg);
-    }
-
-    #hold-ring circle {
-      fill: none;
-      stroke: #FFFF00;
-      stroke-width: 5;
-      stroke-dasharray: 157;
-      stroke-dashoffset: 157;
     }
 
     /* 啟動與休息遮罩畫面 */
@@ -617,11 +612,8 @@
 </head>
 <body>
 
-  <!-- 隱藏式教師按鈕（左上角長按 2 秒） -->
-  <div id="teacher-trigger" title="長按 2 秒開啟教師設定">
-    <svg id="hold-ring" viewBox="0 0 56 56">
-      <circle id="hold-circle" cx="28" cy="28" r="25"></circle>
-    </svg>
+  <!-- 教師設定按鈕（左上角單按 1 下即開啟） -->
+  <div id="teacher-trigger" title="開啟教師設定">
     <svg class="gear-icon" viewBox="0 0 24 24">
       <path d="M19.14,12.94c0.04-0.3,0.06-0.61,0.06-0.94c0-0.32-0.02-0.64-0.07-0.94l2.03-1.58c0.18-0.14,0.23-0.41,0.12-0.61 l-1.92-3.32c-0.12-0.22-0.37-0.29-0.59-0.22l-2.39,0.96c-0.5-0.38-1.03-0.7-1.62-0.94L14.4,2.81c-0.04-0.24-0.24-0.41-0.48-0.41 h-3.84c-0.24,0-0.43,0.17-0.47,0.41L9.25,5.35C8.66,5.59,8.12,5.92,7.63,6.29L5.24,5.33c-0.22-0.08-0.47,0-0.59,0.22L2.74,8.87 C2.62,9.08,2.66,9.34,2.86,9.48l2.03,1.58C4.84,11.36,4.8,11.69,4.8,12s0.02,0.64,0.07,0.94l-2.03,1.58 c-0.18,0.14-0.23,0.41-0.12,0.61l1.92,3.32c0.12,0.22,0.37,0.29,0.59,0.22l2.39-0.96c0.5,0.38,1.03,0.7,1.62,0.94l0.36,2.54 c0.05,0.24,0.24,0.41,0.48,0.41h3.84c0.24,0,0.44-0.17,0.47-0.41l0.36-2.54c0.59-0.24,1.13-0.56,1.62-0.94l2.39,0.96 c0.22,0.08,0.47,0,0.59-0.22l1.92-3.32c0.12-0.22,0.07-0.47-0.12-0.61L19.14,12.94z M12,15.6c-1.98,0-3.6-1.62-3.6-3.6 s1.62-3.6,3.6-3.6s3.6,1.62,3.6,3.6S13.98,15.6,12,15.6z"/>
     </svg>
@@ -646,7 +638,7 @@
     <h1 style="font-size: 2.6rem; color: #FFFF00; margin: 12px 0;">智選小達人</h1>
     <p style="font-size: 1.2rem; color: #CCCCCC; max-width: 500px; line-height: 1.6;">
       循序漸進圖片選辦訓練（一選一 → 二選一 → 三選一）<br/>
-      <span style="font-size: 0.95rem; color: #888;">（進入後長按左上角齒輪 2 秒可開啟教師設定及上傳自訂照片）</span>
+      <span style="font-size: 0.95rem; color: #888;">（進入後按一下左上角齒輪即可開啟教師設定及上傳自訂照片）</span>
     </p>
     <button class="big-start-btn" id="start-btn">開始訓練</button>
   </div>
@@ -691,7 +683,7 @@
         <div class="btn-group" data-setting="stageMode">
           <button class="opt-btn active" data-val="auto">自動進階（一選一 → 二選一 → 三選一）</button>
           <button class="opt-btn" data-val="1">固定：一選一（建立指認因果）</button>
-          <button class="opt-btn" data-val="2">固定：二選一（雙向對比辨識）</button>
+          <button class="opt-btn" data-val="2">固定：二選一（雙向左右分開辨識）</button>
           <button class="opt-btn" data-val="3">固定：三選一（多重視覺搜尋）</button>
         </div>
       </div>
@@ -1395,43 +1387,14 @@
         : 'none';
     }
 
-    // === 隱藏式教師按鈕長按 2 秒 ===
+    // === 教師設定按鈕（單按 1 下即開啟） ===
     const trigger = document.getElementById('teacher-trigger');
-    const holdCircle = document.getElementById('hold-circle');
-    let holdStart = null;
-    let holdRaf = null;
-
-    function updateHoldProgress(timestamp) {
-      if (!holdStart) return;
-      const elapsed = timestamp - holdStart;
-      const progress = Math.min(1, elapsed / 2000);
-      holdCircle.style.strokeDashoffset = 157 * (1 - progress);
-
-      if (progress >= 1) {
-        holdStart = null;
-        holdCircle.style.strokeDashoffset = 157;
-        openTeacherPanel();
-      } else {
-        holdRaf = requestAnimationFrame(updateHoldProgress);
-      }
-    }
-
-    trigger.addEventListener('pointerdown', (e) => {
-      e.stopPropagation();
-      holdStart = performance.now();
-      holdRaf = requestAnimationFrame(updateHoldProgress);
-    });
-
-    ['pointerup', 'pointerleave', 'pointercancel'].forEach(evt => {
-      trigger.addEventListener(evt, () => {
-        holdStart = null;
-        cancelAnimationFrame(holdRaf);
-        holdCircle.style.strokeDashoffset = 157;
-      });
-    });
-
-    // === 教師設定面板 ===
     const teacherPanel = document.getElementById('teacher-panel');
+
+    trigger.addEventListener('click', (e) => {
+      e.stopPropagation();
+      openTeacherPanel();
+    });
 
     function openTeacherPanel() {
       state.isPaused = true;

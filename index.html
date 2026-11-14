@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <title>智選小達人 - 多學生與4主題選辦訓練</title>
+  <title>智選小達人 - 認識圖片與多主題選辦訓練</title>
   <style>
     :root {
       --bg-color: #000000;
@@ -73,7 +73,7 @@
       color: #FFFFFF;
       padding: 8px 16px;
       border-radius: 20px;
-      font-size: 1.1rem;
+      font-size: 1.05rem;
       font-weight: 900;
       white-space: nowrap;
       cursor: pointer;
@@ -85,9 +85,14 @@
       color: var(--text-color);
       padding: 8px 16px;
       border-radius: 20px;
-      font-size: 1.1rem;
+      font-size: 1.05rem;
       font-weight: 900;
       white-space: nowrap;
+    }
+
+    #level-badge.learn-mode-badge {
+      border-color: #00D4FF;
+      color: #00D4FF;
     }
 
     #progress-bar-container {
@@ -144,7 +149,7 @@
     }
 
     #prompt-banner {
-      font-size: clamp(2rem, 4.5vw, 3.4rem);
+      font-size: clamp(2rem, 4.3vw, 3.3rem);
       font-weight: 900;
       text-align: center;
       color: var(--text-color);
@@ -171,6 +176,15 @@
       gap: clamp(48px, 10vw, 150px);
     }
 
+    /* 三選一專用：拉開三張圖片之間的空隙，減少誤觸 */
+    #choices-grid.choices-3 {
+      width: 100vw;
+      max-width: 100vw;
+      justify-content: space-between;
+      padding: 0 clamp(16px, 2.5vw, 34px);
+      gap: clamp(32px, 5vw, 72px);
+    }
+
     /* 圖片選擇卡片 */
     .choice-card {
       background-color: var(--card-bg);
@@ -187,19 +201,27 @@
       box-shadow: 0 10px 28px rgba(0, 0, 0, 0.45);
     }
 
+    /* 認識圖片 & 一選一：特大置中卡片 */
+    .choices-0 .choice-card,
     .choices-1 .choice-card {
       width: min(68vw, 520px);
       height: min(64vh, 520px);
     }
 
+    .choices-0 .choice-card {
+      border-color: #00D4FF;
+    }
+
+    /* 二選一：左右兩端超大卡片 */
     .choices-2 .choice-card {
       width: min(41vw, 500px);
       height: min(62vh, 500px);
     }
 
+    /* 三選一：三張分開大卡片（留足間隔空隙） */
     .choices-3 .choice-card {
-      width: min(30vw, 390px);
-      height: min(55vh, 430px);
+      width: min(27vw, 360px);
+      height: min(54vh, 420px);
     }
 
     .choice-card:active {
@@ -1009,7 +1031,7 @@
   <div id="top-bar">
     <div class="top-badges-left">
       <div id="student-theme-badge" title="點擊切換學生或主題">👤 學生 1 ｜ 📁 主題 1</div>
-      <div id="level-badge">階段 1：一選一</div>
+      <div id="level-badge">階段 0：認識圖片</div>
     </div>
     <div id="progress-bar-container"></div>
     <button id="replay-audio-btn">🔊 再聽一次</button>
@@ -1018,7 +1040,7 @@
   <!-- 主遊戲畫面 -->
   <div id="main-container">
     <div id="prompt-banner">請先上傳相片建立題庫</div>
-    <div id="choices-grid" class="choices-1"></div>
+    <div id="choices-grid" class="choices-0"></div>
   </div>
 
   <!-- 開始畫面：先選學生，再選該學生的 4 個自訂主題 -->
@@ -1111,28 +1133,29 @@
         </div>
         <div class="stat-box">
           <div class="stat-value" id="stat-accuracy">--</div>
-          <div class="stat-label">此學生首次準確率</div>
+          <div class="stat-label">此學生選辦準確率</div>
         </div>
         <div class="stat-box">
-          <div class="stat-value" id="stat-stage">一選一</div>
+          <div class="stat-value" id="stat-stage">認識圖片</div>
           <div class="stat-label">目前訓練階段</div>
         </div>
       </div>
 
-      <!-- 2. 選辦階段模式 -->
+      <!-- 2. 學習與選辦階段模式（新增階段 0：認識圖片） -->
       <div class="setting-group">
-        <label>2. 此學生的選辦難度階段（選項數量）</label>
+        <label>2. 此學生的學習與選辦階段（先認識圖片再進階選辦）</label>
         <div class="btn-group" data-setting="stageMode">
-          <button class="opt-btn active" data-val="auto">自動進階（一選一 → 二選一 → 三選一）</button>
+          <button class="opt-btn active" data-val="auto">自動進階（認識圖片 → 一選一 → 二選一 → 三選一）</button>
+          <button class="opt-btn" data-val="0">固定：認識圖片（按相片讀出名稱）</button>
           <button class="opt-btn" data-val="1">固定：一選一（建立指認因果）</button>
           <button class="opt-btn" data-val="2">固定：二選一（左右兩端分開大卡片）</button>
-          <button class="opt-btn" data-val="3">固定：三選一（多重視覺搜尋）</button>
+          <button class="opt-btn" data-val="3">固定：三選一（三張分開視覺搜尋）</button>
         </div>
       </div>
 
       <!-- 3. 卡片是否顯示文字名稱 -->
       <div class="setting-group">
-        <label>3. 相片下方文字提示（識字與純相片區辨切換）</label>
+        <label>3. 選辦測驗時相片下方文字提示（認識圖片階段一律顯示名稱）</label>
         <div class="btn-group" data-setting="showText">
           <button class="opt-btn active" data-val="true">顯示相片 ＋ 文字名稱（圖文配對）</button>
           <button class="opt-btn" data-val="false">只顯示相片（純聽覺理解選圖）</button>
@@ -1177,6 +1200,7 @@
 
   <script>
     // === 多學生檔案 ＋ 每人 4 個自訂主題儲存結構 ===
+    // currentChoices: 0 = 認識圖片模式, 1 = 一選一, 2 = 二選一, 3 = 三選一
     const PROFILES_STORAGE_KEY = 'smart_matcher_profiles_4themes_v1';
     const ACTIVE_ID_STORAGE_KEY = 'smart_matcher_active_student_4t_v1';
 
@@ -1202,7 +1226,7 @@
         themes: createDefaultThemes(),
         settings: {
           stageMode: 'auto',
-          currentChoices: 1,
+          currentChoices: 0, // 預設從「認識圖片」開始，按過 3 張後自動進階一選一 → 二選一 → 三選一
           streakAtLevel: 0,
           showText: true,
           theme: 'dark',
@@ -1226,6 +1250,9 @@
       if (typeof profile.activeThemeIndex !== 'number' || profile.activeThemeIndex < 0 || profile.activeThemeIndex > 3) {
         profile.activeThemeIndex = 0;
       }
+      if (typeof profile.settings.currentChoices !== 'number' || profile.settings.currentChoices < 0) {
+        profile.settings.currentChoices = 0;
+      }
     }
 
     function loadAllProfiles() {
@@ -1236,33 +1263,8 @@
         profiles = [];
       }
 
-      // 遷移舊版資料（如同事之前已建立學生或上傳相片，自動匯入到主題 1，資料完全保留）
-      if (profiles.length === 0) {
-        try {
-          const prevProfilesRaw = localStorage.getItem('smart_matcher_student_profiles_v1');
-          if (prevProfilesRaw) {
-            const prevList = JSON.parse(prevProfilesRaw);
-            if (Array.isArray(prevList) && prevList.length > 0) {
-              prevList.forEach(oldP => {
-                ensureProfileThemesValid(oldP);
-                profiles.push(oldP);
-              });
-            }
-          }
-        } catch (e) {}
-      }
-
       if (profiles.length === 0) {
         const defaultStu = createDefaultProfile('學生 1');
-        try {
-          const legacyRaw = localStorage.getItem('smart_matcher_pure_custom_v1');
-          if (legacyRaw) {
-            const legacyItems = JSON.parse(legacyRaw);
-            if (Array.isArray(legacyItems) && legacyItems.length > 0) {
-              defaultStu.themes[0].items = legacyItems;
-            }
-          }
-        } catch (e) {}
         profiles.push(defaultStu);
       }
 
@@ -1308,6 +1310,7 @@
       wrongAttemptsThisQuestion: 0,
       targetItem: null,
       lastTargetId: '',
+      learnIndex: 0,
       isLocked: false,
       isPaused: true
     };
@@ -1358,6 +1361,7 @@
           activeStudentId = p.id;
           runtime.roundCompleted = 0;
           runtime.lastTargetId = '';
+          runtime.learnIndex = 0;
           saveAllProfiles();
           applyActiveProfileSettings();
           renderStartScreen();
@@ -1373,7 +1377,6 @@
       });
       studentGrid.appendChild(addBtn);
 
-      // 渲染目前選定學生的 4 個主題
       themeStepLabel.textContent = `第 2 步：選擇「${activeProfile.name}」今天練習的主題`;
       themeGrid.innerHTML = '';
 
@@ -1388,6 +1391,7 @@
           activeProfile.activeThemeIndex = idx;
           runtime.roundCompleted = 0;
           runtime.lastTargetId = '';
+          runtime.learnIndex = 0;
           saveAllProfiles();
           applyActiveProfileSettings();
           renderStartScreen();
@@ -1407,6 +1411,7 @@
       activeStudentId = newProfile.id;
       runtime.roundCompleted = 0;
       runtime.lastTargetId = '';
+      runtime.learnIndex = 0;
       saveAllProfiles();
       applyActiveProfileSettings();
       renderStartScreen();
@@ -1449,6 +1454,24 @@
         gain.connect(audioCtx.destination);
         osc.start(now);
         osc.stop(now + 0.45);
+      });
+    }
+
+    function playLearnTapSound() {
+      if (!audioCtx) return;
+      const notes = [587.33, 880.00];
+      notes.forEach((freq, idx) => {
+        const now = audioCtx.currentTime + idx * 0.08;
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(freq, now);
+        gain.gain.setValueAtTime(0.20, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start(now);
+        osc.stop(now + 0.35);
       });
     }
 
@@ -1523,15 +1546,21 @@
     }
 
     // === 頂部狀態列更新 ===
-    function updateHeaderUI(effectiveChoices) {
+    function updateHeaderUI(effectiveStage) {
       const profile = getActiveProfile();
       const activeTheme = getActiveTheme();
       const s = profile.settings;
-      const choicesToShow = effectiveChoices || s.currentChoices;
+      const stageToShow = effectiveStage !== undefined ? effectiveStage : s.currentChoices;
 
       studentThemeBadge.textContent = `👤 ${profile.name} ｜ 📁 ${activeTheme.name}`;
-      const stageNames = { 1: '階段 1：一選一', 2: '階段 2：二選一', 3: '階段 3：三選一' };
-      levelBadge.textContent = stageNames[choicesToShow] || '一選一';
+      const stageNames = {
+        0: '階段 0：認識圖片',
+        1: '階段 1：一選一',
+        2: '階段 2：二選一',
+        3: '階段 3：三選一'
+      };
+      levelBadge.textContent = stageNames[stageToShow] || '認識圖片';
+      levelBadge.classList.toggle('learn-mode-badge', stageToShow === 0);
 
       progressBarContainer.innerHTML = '';
       if (s.roundLimit <= 0) {
@@ -1546,7 +1575,7 @@
       }
     }
 
-    // === 產生新一題（僅使用目前學生 ＋ 目前選定主題的相片） ===
+    // === 產生新一題（包含「階段 0：認識圖片」與「階段 1-3：選辦測驗」） ===
     function generateQuestion() {
       if (runtime.isPaused) return;
 
@@ -1570,6 +1599,41 @@
         s.currentChoices = Number(s.stageMode);
       }
 
+      // === 模式 A：階段 0「認識圖片」（學生按圖片，系統讀出名稱） ===
+      if (s.currentChoices === 0) {
+        updateHeaderUI(0);
+        const target = items[runtime.learnIndex % items.length];
+        runtime.learnIndex += 1;
+        runtime.targetItem = target;
+        runtime.lastTargetId = target.id;
+
+        promptBanner.textContent = '睇下呢個，撳一下聽下係乜嘢呀？';
+        speakCantonese('睇下呢個，撳一下聽下係乜嘢呀？', 1.12);
+
+        // 認識階段一律顯示文字名稱，建立音、形、圖配對
+        choicesGrid.className = 'choices-0';
+        choicesGrid.innerHTML = '';
+
+        const card = document.createElement('div');
+        card.className = 'choice-card';
+        card.dataset.id = target.id;
+        card.innerHTML = `
+          <div class="choice-media-box">
+            <img class="choice-photo" src="${target.imageUrl}" alt="${target.name}" />
+          </div>
+          <div class="choice-label">${target.name}</div>
+        `;
+
+        card.addEventListener('pointerdown', (e) => {
+          e.preventDefault();
+          handleLearnCardTap(card, target);
+        });
+
+        choicesGrid.appendChild(card);
+        return;
+      }
+
+      // === 模式 B：階段 1～3「選辦訓練」（一選一 / 二選一 / 三選一） ===
       const uniqueNamesCount = new Set(items.map(i => i.name)).size;
       const maxAvailableChoices = Math.max(1, Math.min(3, uniqueNamesCount));
       const effectiveChoices = Math.min(s.currentChoices, maxAvailableChoices);
@@ -1618,7 +1682,45 @@
       });
     }
 
-    // === 處理學生點擊卡片 ===
+    // === 處理「認識圖片」階段點擊：說出圖片名稱，認識 3 張後自動進入選辦 ===
+    function handleLearnCardTap(cardEl, item) {
+      if (runtime.isLocked || runtime.isPaused) return;
+      runtime.isLocked = true;
+
+      const profile = getActiveProfile();
+      const s = profile.settings;
+
+      cardEl.classList.add('correct-hit');
+      const rect = cardEl.getBoundingClientRect();
+      spawnCelebrationParticles(rect.left + rect.width / 2, rect.top + rect.height / 2);
+      playLearnTapSound();
+      if (navigator.vibrate) navigator.vibrate(60);
+
+      promptBanner.textContent = `呢個係「${item.name}」呀！`;
+      speakCantonese(`呢個係${item.name}呀！`, 1.16);
+
+      runtime.roundCompleted += 1;
+      s.streakAtLevel += 1;
+
+      // 自動進階：認識 3 張圖片後，自動切換進入「階段 1：一選一」
+      const learnTargetCount = Math.min(3, getActiveTheme().items.length);
+      if (s.stageMode === 'auto' && s.streakAtLevel >= learnTargetCount) {
+        s.currentChoices = 1;
+        s.streakAtLevel = 0;
+      }
+
+      saveAllProfiles();
+      updateHeaderUI();
+      updateStatsUI();
+
+      if (s.roundLimit > 0 && runtime.roundCompleted >= s.roundLimit) {
+        setTimeout(showRoundBreak, 1450);
+      } else {
+        setTimeout(generateQuestion, 1750);
+      }
+    }
+
+    // === 處理「選辦測驗」階段點擊卡片 ===
     function handleChoiceClick(cardEl, chosenItem) {
       if (runtime.isLocked || runtime.isPaused) return;
       if (cardEl.classList.contains('wrong-dimmed')) return;
@@ -1716,7 +1818,12 @@
     document.getElementById('replay-audio-btn').addEventListener('click', () => {
       initAudio();
       if (runtime.targetItem && !runtime.isPaused) {
-        speakCantonese(`邊個係${runtime.targetItem.name}呀？`, 1.12);
+        const s = getActiveProfile().settings;
+        if (s.currentChoices === 0) {
+          speakCantonese(`呢個係${runtime.targetItem.name}呀！`, 1.15);
+        } else {
+          speakCantonese(`邊個係${runtime.targetItem.name}呀？`, 1.12);
+        }
       }
     });
 
@@ -1733,16 +1840,21 @@
       speakCantonese('好叻喎，做得好！完成一回合啦，休息一陣先！', 1.18);
 
       const accuracy = profile.stats.totalCompleted > 0
-        ? Math.round((profile.stats.firstTryCorrect / profile.stats.totalCompleted) * 100)
-        : 100;
+        ? Math.round((profile.stats.firstTryCorrect / profile.stats.totalCompleted) * 100) + '%'
+        : '100%';
 
-      const stageText = { 1: '一選一', 2: '二選一', 3: '三選一' }[profile.settings.currentChoices];
+      const stageText = {
+        0: '認識圖片',
+        1: '一選一',
+        2: '二選一',
+        3: '三選一'
+      }[profile.settings.currentChoices];
 
       document.getElementById('break-stats-text').innerHTML = `
         學生與主題：<strong>${profile.name} － ${activeTheme.name}</strong><br/>
-        本回合完成：<strong>${runtime.roundCompleted}</strong> 題<br/>
-        目前選辦階段：<strong>${stageText}</strong><br/>
-        累計首次指認準確率：<strong>${accuracy}%</strong>
+        本回合完成：<strong>${runtime.roundCompleted}</strong> 次練習<br/>
+        目前訓練階段：<strong>${stageText}</strong><br/>
+        累計選辦準確率：<strong>${accuracy}</strong>
       `;
 
       document.getElementById('break-overlay').style.display = 'flex';
@@ -1781,6 +1893,7 @@
           activeStudentId = p.id;
           runtime.roundCompleted = 0;
           runtime.lastTargetId = '';
+          runtime.learnIndex = 0;
           saveAllProfiles();
           applyActiveProfileSettings();
           renderProfileTabsInPanel();
@@ -1827,6 +1940,7 @@
           activeProfile.activeThemeIndex = idx;
           runtime.roundCompleted = 0;
           runtime.lastTargetId = '';
+          runtime.learnIndex = 0;
           saveAllProfiles();
           applyActiveProfileSettings();
           renderThemeSlotsInPanel();
@@ -1839,7 +1953,6 @@
       themeNameInput.value = currentTheme.name;
     }
 
-    // 修改學生名字
     document.getElementById('current-student-name-input').addEventListener('change', (e) => {
       const newName = e.target.value.trim();
       const activeProfile = getActiveProfile();
@@ -1854,7 +1967,6 @@
       }
     });
 
-    // 修改目前選定主題的名字
     document.getElementById('current-theme-name-input').addEventListener('input', (e) => {
       const newName = e.target.value.trim();
       const activeTheme = getActiveTheme();
@@ -1881,6 +1993,7 @@
         activeStudentId = profiles[0].id;
         runtime.roundCompleted = 0;
         runtime.lastTargetId = '';
+        runtime.learnIndex = 0;
         saveAllProfiles();
         applyActiveProfileSettings();
         renderProfileTabsInPanel();
@@ -2138,7 +2251,7 @@
         : '--';
       document.getElementById('stat-accuracy').textContent = accuracy;
       document.getElementById('stat-stage').textContent =
-        { 1: '一選一', 2: '二選一', 3: '三選一' }[profile.settings.currentChoices];
+        { 0: '認識圖片', 1: '一選一', 2: '二選一', 3: '三選一' }[profile.settings.currentChoices];
     }
 
     document.querySelectorAll('.btn-group').forEach(group => {
@@ -2161,7 +2274,7 @@
             if (val !== 'auto') {
               s.currentChoices = Number(val);
             } else {
-              s.currentChoices = 1;
+              s.currentChoices = 0;
               s.streakAtLevel = 0;
             }
           }
@@ -2181,8 +2294,9 @@
       profile.stats.totalCompleted = 0;
       profile.stats.firstTryCorrect = 0;
       runtime.roundCompleted = 0;
+      runtime.learnIndex = 0;
       profile.settings.streakAtLevel = 0;
-      if (profile.settings.stageMode === 'auto') profile.settings.currentChoices = 1;
+      if (profile.settings.stageMode === 'auto') profile.settings.currentChoices = 0;
       saveAllProfiles();
       updateHeaderUI();
       updateStatsUI();

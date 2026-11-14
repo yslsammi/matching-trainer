@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <title>智選小達人 - 香港生活實物選辦訓練</title>
+  <title>智選小達人 - 真實相片選辦訓練</title>
   <style>
     :root {
       --bg-color: #000000;
@@ -120,8 +120,8 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 82px 24px 24px 24px;
-      gap: 22px;
+      padding: 82px 16px 24px 16px;
+      gap: 20px;
     }
 
     #prompt-banner {
@@ -139,28 +139,29 @@
       justify-content: center;
       gap: clamp(18px, 3.5vw, 44px);
       width: 100%;
-      max-width: 1380px;
       flex: 1;
-      max-height: 68vh;
+      max-height: 70vh;
     }
 
-    /* 二選一專用：明確拉開左右兩側距離，中間留出防誤觸安全空白區 */
+    /* 二選一專用：極致拉開至螢幕最左與最右兩端，中間留出超寬防誤觸安全區 */
     #choices-grid.choices-2 {
+      width: 100vw;
+      max-width: 100vw;
       justify-content: space-between;
-      padding: 0 clamp(24px, 6vw, 96px);
-      gap: clamp(64px, 14vw, 220px);
+      padding: 0 clamp(14px, 2.2vw, 32px);
+      gap: 0;
     }
 
     /* 圖片選擇卡片 */
     .choice-card {
       background-color: var(--card-bg);
       border: 7px solid var(--card-border);
-      border-radius: 32px;
+      border-radius: 30px;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 18px;
+      padding: 14px;
       cursor: pointer;
       position: relative;
       transition: transform 0.22s ease, opacity 0.3s ease, border-color 0.25s ease, box-shadow 0.25s ease;
@@ -169,13 +170,13 @@
 
     /* 依選項數量自動調整大卡片尺寸 */
     .choices-1 .choice-card {
-      width: min(62vw, 450px);
-      height: min(58vh, 450px);
+      width: min(64vw, 460px);
+      height: min(60vh, 460px);
     }
 
     .choices-2 .choice-card {
-      width: min(35vw, 370px);
-      height: min(52vh, 400px);
+      width: min(30vw, 330px);
+      height: min(52vh, 390px);
     }
 
     .choices-3 .choice-card {
@@ -187,14 +188,15 @@
       transform: scale(0.96);
     }
 
-    .choice-svg-box {
-      width: 76%;
-      height: 74%;
+    .choice-photo-box {
+      width: 92%;
+      height: 76%;
       display: flex;
       align-items: center;
       justify-content: center;
       overflow: hidden;
       border-radius: 18px;
+      background-color: #2A2A30;
     }
 
     .choice-photo {
@@ -202,7 +204,7 @@
       height: 100%;
       object-fit: cover;
       border-radius: 18px;
-      border: 3px solid rgba(255, 255, 255, 0.25);
+      display: block;
     }
 
     .choice-label {
@@ -217,16 +219,16 @@
       display: none;
     }
 
-    .hide-labels .choice-svg-box {
-      width: 86%;
-      height: 86%;
+    .hide-labels .choice-photo-box {
+      width: 95%;
+      height: 92%;
     }
 
     /* 答對與錯誤提示狀態 */
     .choice-card.correct-hit {
       border-color: #00FF00 !important;
       box-shadow: 0 0 40px rgba(0, 255, 0, 0.85);
-      transform: scale(1.07);
+      transform: scale(1.06);
       z-index: 15;
     }
 
@@ -247,7 +249,7 @@
       }
       50% {
         box-shadow: 0 0 42px rgba(0, 255, 0, 1);
-        transform: scale(1.05);
+        transform: scale(1.04);
         border-color: #00FF00;
       }
     }
@@ -635,10 +637,10 @@
 
   <!-- 開始畫面 -->
   <div id="start-overlay">
-    <div style="font-size: 5rem;">🚖</div>
+    <div style="font-size: 5rem;">📸</div>
     <h1 style="font-size: 2.6rem; color: #FFFF00; margin: 12px 0;">智選小達人</h1>
     <p style="font-size: 1.2rem; color: #CCCCCC; max-width: 520px; line-height: 1.6;">
-      香港生活實物與交通工具選辦訓練（一選一 → 二選一 → 三選一）<br/>
+      真實相片選辦訓練（一選一 → 二選一 → 三選一）<br/>
       <span style="font-size: 0.95rem; color: #888;">（進入後按一下左上角齒輪即可開啟教師設定及上傳自訂照片）</span>
     </p>
     <button class="big-start-btn" id="start-btn">開始訓練</button>
@@ -684,29 +686,29 @@
         <div class="btn-group" data-setting="stageMode">
           <button class="opt-btn active" data-val="auto">自動進階（一選一 → 二選一 → 三選一）</button>
           <button class="opt-btn" data-val="1">固定：一選一（建立指認因果）</button>
-          <button class="opt-btn" data-val="2">固定：二選一（雙向左右分開辨識）</button>
+          <button class="opt-btn" data-val="2">固定：二選一（左右兩端分開辨識）</button>
           <button class="opt-btn" data-val="3">固定：三選一（多重視覺搜尋）</button>
         </div>
       </div>
 
       <!-- 2. 生活圖片主題分類 -->
       <div class="setting-group">
-        <label>2. 訓練題庫來源與主題</label>
+        <label>2. 訓練相片題庫來源與主題</label>
         <div class="btn-group" data-setting="category">
-          <button class="opt-btn active" data-val="all">全部香港實物（9 款 ＋ 自訂照片）</button>
+          <button class="opt-btn active" data-val="all">全部真實相片（9 款 ＋ 自訂照片）</button>
           <button class="opt-btn" data-val="vehicle">香港交通工具（的士、地鐵、巴士、復康巴士）</button>
           <button class="opt-btn" data-val="daily">日常用品（牙刷、書包、輪椅、毛巾、波鞋）</button>
           <button class="opt-btn" data-val="custom">⭐ 只用老師自訂照片（家人 / 同學 / 實物）</button>
         </div>
-        <div id="custom-warning-msg">⚠️ 提示：自訂照片數量不足目前選辦選項數（建議至少上傳 3 張），系統將暫時自動補入內置實物配對。</div>
+        <div id="custom-warning-msg">⚠️ 提示：自訂照片數量不足目前選辦選項數（建議至少上傳 3 張），系統將暫時自動補入內置相片配對。</div>
       </div>
 
       <!-- 3. 卡片是否顯示文字名稱 -->
       <div class="setting-group">
-        <label>3. 圖片下方文字提示（識字與純圖片區辨切換）</label>
+        <label>3. 相片下方文字提示（識字與純相片區辨切換）</label>
         <div class="btn-group" data-setting="showText">
-          <button class="opt-btn active" data-val="true">顯示圖片 ＋ 文字名稱（圖文配對）</button>
-          <button class="opt-btn" data-val="false">只顯示圖片（純聽覺理解選圖）</button>
+          <button class="opt-btn active" data-val="true">顯示相片 ＋ 文字名稱（圖文配對）</button>
+          <button class="opt-btn" data-val="false">只顯示相片（純聽覺理解選圖）</button>
         </div>
       </div>
 
@@ -723,7 +725,7 @@
       <div class="setting-group">
         <label>5. 答錯時視覺引導提示</label>
         <div class="btn-group" data-setting="autoHint">
-          <button class="opt-btn active" data-val="true">開啟（選錯 1 次後正確圖片閃光提示）</button>
+          <button class="opt-btn active" data-val="true">開啟（選錯 1 次後正確相片閃光提示）</button>
           <button class="opt-btn" data-val="false">關閉（僅語音鼓勵再試）</button>
         </div>
       </div>
@@ -741,7 +743,7 @@
 
       <!-- 7. 上傳自訂照片與名稱 -->
       <div class="setting-group">
-        <label>7. 上傳自訂照片（學生家人、同學、老師或真實課室物品）</label>
+        <label>7. 上傳自訂實拍照片（學生家人、同學、老師或真實課室物品）</label>
         <div class="custom-upload-box">
           <div class="upload-controls">
             <label for="custom-photo-file" class="file-pick-btn">📷 選擇照片 / 拍照</label>
@@ -765,287 +767,81 @@
   </div>
 
   <script>
-    // === 9 款香港生活實物與交通工具寫實高對比圖庫 ===
+    // === 9 款真實攝影相片題庫（香港交通工具 ＋ 日常生活實物） ===
     const BUILTIN_ITEMS = [
       {
-        id: 'hk_taxi', name: '的士', category: 'vehicle',
-        svg: `<svg viewBox="0 0 240 180" width="100%" height="100%">
-          <defs>
-            <linearGradient id="skyGrad1" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stop-color="#D9ECFF"/>
-              <stop offset="100%" stop-color="#F5F7FA"/>
-            </linearGradient>
-            <linearGradient id="taxiRed" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stop-color="#E61919"/>
-              <stop offset="100%" stop-color="#A80D0D"/>
-            </linearGradient>
-          </defs>
-          <rect width="240" height="180" rx="16" fill="url(#skyGrad1)"/>
-          <!-- 路面 -->
-          <rect x="0" y="132" width="240" height="48" fill="#3A3D42"/>
-          <line x1="16" y1="156" x2="64" y2="156" stroke="#FFD600" stroke-width="5" stroke-linecap="round"/>
-          <line x1="96" y1="156" x2="144" y2="156" stroke="#FFD600" stroke-width="5" stroke-linecap="round"/>
-          <line x1="176" y1="156" x2="224" y2="156" stroke="#FFD600" stroke-width="5" stroke-linecap="round"/>
-          <!-- 車底陰影 -->
-          <ellipse cx="120" cy="142" rx="94" ry="8" fill="rgba(0,0,0,0.45)"/>
-          <!-- 頂部 TAXI 燈箱 -->
-          <rect x="102" y="34" width="38" height="14" rx="4" fill="#FFFDF0" stroke="#222" stroke-width="2"/>
-          <text x="121" y="44" font-size="9.5" font-weight="900" fill="#D91414" text-anchor="middle" font-family="Arial">TAXI</text>
-          <!-- 銀白色車頂 -->
-          <path d="M58 76 L76 48 C80 44, 86 43, 94 43 L152 43 C160 43, 166 45, 170 50 L186 76 Z" fill="#F2F4F7" stroke="#222" stroke-width="2.5"/>
-          <!-- 車窗 -->
-          <polygon points="82,50 116,50 116,74 66,74" fill="#2A3B4C"/>
-          <polygon points="122,50 158,50 174,74 122,74" fill="#2A3B4C"/>
-          <!-- 紅色車身 -->
-          <path d="M22 96 C22 84, 30 76, 44 76 L194 76 C208 76, 218 84, 218 98 L218 124 C218 129, 214 132, 208 132 L32 132 C26 132, 22 129, 22 124 Z" fill="url(#taxiRed)" stroke="#1C1C1C" stroke-width="2.5"/>
-          <!-- 車門分隔線與手把 -->
-          <line x1="119" y1="76" x2="119" y2="130" stroke="#6E0707" stroke-width="2"/>
-          <rect x="98" y="88" width="12" height="4" rx="2" fill="#E0E0E0"/>
-          <rect x="148" y="88" width="12" height="4" rx="2" fill="#E0E0E0"/>
-          <!-- 頭燈與尾燈 -->
-          <rect x="206" y="86" width="11" height="14" rx="3" fill="#FFF59D" stroke="#333" stroke-width="1.5"/>
-          <rect x="23" y="86" width="8" height="14" rx="2" fill="#FF8F00" stroke="#333" stroke-width="1.5"/>
-          <!-- 防撞欄 -->
-          <rect x="18" y="118" width="204" height="11" rx="5" fill="#222226"/>
-          <!-- 車輪 -->
-          <circle cx="66" cy="132" r="20" fill="#18181A" stroke="#000" stroke-width="2"/>
-          <circle cx="66" cy="132" r="10" fill="#D0D5DD"/>
-          <circle cx="66" cy="132" r="4" fill="#333"/>
-          <circle cx="176" cy="132" r="20" fill="#18181A" stroke="#000" stroke-width="2"/>
-          <circle cx="176" cy="132" r="10" fill="#D0D5DD"/>
-          <circle cx="176" cy="132" r="4" fill="#333"/>
-        </svg>`
+        id: 'hk_taxi',
+        name: '的士',
+        category: 'vehicle',
+        imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/Hong_Kong_Taxi_2014.jpg/800px-Hong_Kong_Taxi_2014.jpg',
+        backupUrl: 'https://images.unsplash.com/photo-1556122071-e404eaedb77f?auto=format&fit=crop&w=800&q=80'
       },
       {
-        id: 'hk_mtr', name: '地鐵', category: 'vehicle',
-        svg: `<svg viewBox="0 0 240 180" width="100%" height="100%">
-          <defs>
-            <linearGradient id="mtrBody" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stop-color="#F2F4F8"/>
-              <stop offset="60%" stop-color="#CFD5DF"/>
-              <stop offset="100%" stop-color="#9AA3B2"/>
-            </linearGradient>
-          </defs>
-          <rect width="240" height="180" rx="16" fill="#E3EAF2"/>
-          <!-- 路軌基座 -->
-          <rect x="0" y="138" width="240" height="42" fill="#4A4E54"/>
-          <line x1="0" y1="142" x2="240" y2="142" stroke="#8C939E" stroke-width="4"/>
-          <!-- 高架橋支柱陰影 -->
-          <ellipse cx="120" cy="140" rx="102" ry="6" fill="rgba(0,0,0,0.4)"/>
-          <!-- 港鐵列車主體（流線車頭 + 車廂） -->
-          <path d="M22 134 L22 68 C22 50, 36 38, 56 38 L216 38 C222 38, 226 42, 226 48 L226 128 C226 132, 222 134, 218 134 Z" fill="url(#mtrBody)" stroke="#222" stroke-width="2.5"/>
-          <!-- 經典港鐵紅色車頂與腰線 -->
-          <path d="M36 46 L224 46 L224 54 L28 54 Z" fill="#C8102E"/>
-          <rect x="22" y="114" width="204" height="10" fill="#C8102E"/>
-          <!-- 車頭擋風玻璃與目的地顯示屏 -->
-          <path d="M26 94 L30 62 C32 56, 38 54, 46 54 L62 54 L62 94 Z" fill="#1C2833"/>
-          <rect x="33" y="57" width="24" height="8" rx="2" fill="#FF9800"/>
-          <!-- 紅色對開列車門 1 -->
-          <rect x="76" y="56" width="32" height="76" rx="3" fill="#C8102E" stroke="#222" stroke-width="2"/>
-          <line x1="92" y1="56" x2="92" y2="132" stroke="#6E0818" stroke-width="2"/>
-          <rect x="80" y="62" width="9" height="28" rx="2" fill="#2A3B4C"/>
-          <rect x="95" y="62" width="9" height="28" rx="2" fill="#2A3B4C"/>
-          <!-- 乘客車窗 -->
-          <rect x="116" y="62" width="38" height="28" rx="4" fill="#2A3B4C" stroke="#444" stroke-width="2"/>
-          <!-- 紅色對開列車門 2 -->
-          <rect x="162" y="56" width="32" height="76" rx="3" fill="#C8102E" stroke="#222" stroke-width="2"/>
-          <line x1="178" y1="56" x2="178" y2="132" stroke="#6E0818" stroke-width="2"/>
-          <rect x="166" y="62" width="9" height="28" rx="2" fill="#2A3B4C"/>
-          <rect x="181" y="62" width="9" height="28" rx="2" fill="#2A3B4C"/>
-          <!-- 車尾窗 -->
-          <rect x="202" y="62" width="18" height="28" rx="3" fill="#2A3B4C" stroke="#444" stroke-width="2"/>
-          <!-- 車頭燈 -->
-          <rect x="23" y="102" width="10" height="8" rx="2" fill="#FFF59D"/>
-          <!-- 車輪轉向架 -->
-          <circle cx="56" cy="136" r="7" fill="#1A1A1A"/>
-          <circle cx="80" cy="136" r="7" fill="#1A1A1A"/>
-          <circle cx="168" cy="136" r="7" fill="#1A1A1A"/>
-          <circle cx="192" cy="136" r="7" fill="#1A1A1A"/>
-        </svg>`
+        id: 'hk_mtr',
+        name: '地鐵',
+        category: 'vehicle',
+        imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6d/MTR_M-Train_at_Kowloon_Bay_Station.jpg/800px-MTR_M-Train_at_Kowloon_Bay_Station.jpg',
+        backupUrl: 'https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=800&q=80'
       },
       {
-        id: 'hk_bus', name: '巴士', category: 'vehicle',
-        svg: `<svg viewBox="0 0 240 180" width="100%" height="100%">
-          <rect width="240" height="180" rx="16" fill="#DCEEFF"/>
-          <!-- 路面 -->
-          <rect x="0" y="144" width="240" height="36" fill="#3B3E42"/>
-          <ellipse cx="120" cy="148" rx="96" ry="7" fill="rgba(0,0,0,0.45)"/>
-          <!-- 香港經典紅金雙層巴士車身 -->
-          <rect x="26" y="18" width="188" height="126" rx="14" fill="#C8102E" stroke="#1E1E1E" stroke-width="2.5"/>
-          <!-- 金色車頂與腰帶（九巴城市脈搏風格） -->
-          <path d="M26 30 C26 22, 32 18, 40 18 L200 18 C208 18, 214 22, 214 30 L214 34 L26 34 Z" fill="#D4AF37"/>
-          <rect x="26" y="76" width="188" height="9" fill="#D4AF37"/>
-          <!-- 上層路線牌與車窗 -->
-          <rect x="174" y="38" width="34" height="30" rx="4" fill="#1A1A1A"/>
-          <text x="191" y="58" font-size="14" font-weight="900" fill="#FFB300" text-anchor="middle" font-family="Arial">68X</text>
-          <rect x="34" y="38" width="30" height="30" rx="4" fill="#243447"/>
-          <rect x="69" y="38" width="30" height="30" rx="4" fill="#243447"/>
-          <rect x="104" y="38" width="30" height="30" rx="4" fill="#243447"/>
-          <rect x="139" y="38" width="30" height="30" rx="4" fill="#243447"/>
-          <!-- 下層車窗與上下車門 -->
-          <rect x="34" y="90" width="32" height="28" rx="4" fill="#243447"/>
-          <rect x="72" y="90" width="32" height="28" rx="4" fill="#243447"/>
-          <!-- 中門 -->
-          <rect x="112" y="90" width="24" height="52" rx="3" fill="#243447" stroke="#D4AF37" stroke-width="2"/>
-          <line x1="124" y1="90" x2="124" y2="142" stroke="#D4AF37" stroke-width="2"/>
-          <!-- 前門與駕駛室 -->
-          <rect x="142" y="90" width="32" height="28" rx="4" fill="#243447"/>
-          <rect x="182" y="90" width="24" height="52" rx="3" fill="#243447" stroke="#D4AF37" stroke-width="2"/>
-          <!-- 車頭大燈 -->
-          <rect x="206" y="124" width="7" height="10" rx="2" fill="#FFF59D"/>
-          <!-- 雙層巴士大車輪 -->
-          <circle cx="68" cy="144" r="18" fill="#18181A" stroke="#000" stroke-width="2"/>
-          <circle cx="68" cy="144" r="9" fill="#C0C6D0"/>
-          <circle cx="170" cy="144" r="18" fill="#18181A" stroke="#000" stroke-width="2"/>
-          <circle cx="170" cy="144" r="9" fill="#C0C6D0"/>
-        </svg>`
+        id: 'hk_bus',
+        name: '巴士',
+        category: 'vehicle',
+        imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a3/KMB_ATENU1000_UB8222.jpg/800px-KMB_ATENU1000_UB8222.jpg',
+        backupUrl: 'https://images.unsplash.com/photo-1570125909232-eb263c188f7e?auto=format&fit=crop&w=800&q=80'
       },
       {
-        id: 'hk_rehabus', name: '復康巴士', category: 'vehicle',
-        svg: `<svg viewBox="0 0 240 180" width="100%" height="100%">
-          <rect width="240" height="180" rx="16" fill="#E6F4EA"/>
-          <!-- 路面 -->
-          <rect x="0" y="140" width="240" height="40" fill="#3B3E42"/>
-          <ellipse cx="120" cy="145" rx="95" ry="7" fill="rgba(0,0,0,0.4)"/>
-          <!-- 香港復康巴士（純白高頂小巴車身 ＋ 翠綠色腰帶與輪椅標誌） -->
-          <path d="M26 136 L26 48 C26 36, 34 28, 46 28 L174 28 C184 28, 192 34, 196 44 L214 82 C217 88, 218 94, 218 102 L218 130 C218 134, 214 136, 208 136 Z" fill="#FFFFFF" stroke="#1E1E1E" stroke-width="2.5"/>
-          <!-- 復康巴士標誌性綠色色帶 -->
-          <rect x="26" y="96" width="192" height="18" fill="#009E49"/>
-          <rect x="26" y="114" width="192" height="6" fill="#FFD600"/>
-          <!-- 車窗 -->
-          <rect x="38" y="42" width="42" height="40" rx="5" fill="#263849"/>
-          <rect x="88" y="42" width="46" height="40" rx="5" fill="#263849"/>
-          <polygon points="142,42 184,42 198,82 142,82" fill="#263849"/>
-          <!-- 國際無障礙輪椅標誌（藍底白圖，清晰易辨） -->
-          <rect x="44" y="88" width="34" height="34" rx="6" fill="#0055CC" stroke="#FFFFFF" stroke-width="2"/>
-          <circle cx="62" cy="96" r="3.5" fill="#FFFFFF"/>
-          <path d="M61 101 L61 110 L70 110 L72 116" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-          <path d="M65 113 A7 7 0 1 1 56 105" fill="none" stroke="#FFFFFF" stroke-width="2.8" stroke-linecap="round"/>
-          <!-- 車頭燈 -->
-          <rect x="208" y="106" width="9" height="12" rx="2" fill="#FFF59D" stroke="#333" stroke-width="1.5"/>
-          <!-- 車輪 -->
-          <circle cx="66" cy="138" r="19" fill="#18181A" stroke="#000" stroke-width="2"/>
-          <circle cx="66" cy="138" r="9" fill="#D0D5DD"/>
-          <circle cx="176" cy="138" r="19" fill="#18181A" stroke="#000" stroke-width="2"/>
-          <circle cx="176" cy="138" r="9" fill="#D0D5DD"/>
-        </svg>`
+        id: 'hk_rehabus',
+        name: '復康巴士',
+        category: 'vehicle',
+        imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/Rehabus_HK_Toyota_Coaster.jpg/800px-Rehabus_HK_Toyota_Coaster.jpg',
+        backupUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/Wheelchair_accessible_van.jpg/800px-Wheelchair_accessible_van.jpg'
       },
       {
-        id: 'toothbrush', name: '牙刷', category: 'daily',
-        svg: `<svg viewBox="0 0 240 180" width="100%" height="100%">
-          <rect width="240" height="180" rx="16" fill="#F0F6FC"/>
-          <!-- 柔和陰影 -->
-          <ellipse cx="122" cy="148" rx="84" ry="8" fill="rgba(0,0,0,0.16)"/>
-          <!-- 傾斜寫實牙刷 -->
-          <g transform="rotate(-24 120 92)">
-            <!-- 白色刷毛（分束排列） -->
-            <rect x="148" y="54" width="52" height="24" rx="4" fill="#FFFFFF" stroke="#B0BEC5" stroke-width="2"/>
-            <line x1="158" y1="54" x2="158" y2="78" stroke="#CFD8DC" stroke-width="2.5"/>
-            <line x1="168" y1="54" x2="168" y2="78" stroke="#CFD8DC" stroke-width="2.5"/>
-            <line x1="178" y1="54" x2="178" y2="78" stroke="#CFD8DC" stroke-width="2.5"/>
-            <line x1="188" y1="54" x2="188" y2="78" stroke="#CFD8DC" stroke-width="2.5"/>
-            <!-- 擠在刷毛上的薄荷綠牙膏 -->
-            <path d="M150 54 C156 42, 188 42, 198 52 C192 56, 156 56, 150 54 Z" fill="#00C896" stroke="#008F6B" stroke-width="1.5"/>
-            <!-- 刷頭底座與藍色防滑手柄 -->
-            <rect x="26" y="78" width="178" height="16" rx="8" fill="#0077E6" stroke="#004C99" stroke-width="2.5"/>
-            <!-- 白色防滑握位細節 -->
-            <rect x="46" y="81" width="56" height="10" rx="5" fill="#E3F2FD"/>
-            <line x1="56" y1="81" x2="56" y2="91" stroke="#0077E6" stroke-width="2.5"/>
-            <line x1="68" y1="81" x2="68" y2="91" stroke="#0077E6" stroke-width="2.5"/>
-            <line x1="80" y1="81" x2="80" y2="91" stroke="#0077E6" stroke-width="2.5"/>
-            <line x1="92" y1="81" x2="92" y2="91" stroke="#0077E6" stroke-width="2.5"/>
-          </g>
-        </svg>`
+        id: 'toothbrush',
+        name: '牙刷',
+        category: 'daily',
+        imageUrl: 'https://images.unsplash.com/photo-1559591937-e68214382829?auto=format&fit=crop&w=800&q=80',
+        backupUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c8/Toothbrush_with_toothpaste.jpg/800px-Toothbrush_with_toothpaste.jpg'
       },
       {
-        id: 'schoolbag', name: '書包', category: 'daily',
-        svg: `<svg viewBox="0 0 240 180" width="100%" height="100%">
-          <rect width="240" height="180" rx="16" fill="#FFF8E7"/>
-          <ellipse cx="120" cy="158" rx="64" ry="8" fill="rgba(0,0,0,0.2)"/>
-          <!-- 頂部手提挽帶 -->
-          <path d="M98 30 C98 14, 142 14, 142 30" fill="none" stroke="#1E3A8A" stroke-width="9" stroke-linecap="round"/>
-          <!-- 兩側水壺網袋 -->
-          <rect x="52" y="88" width="22" height="52" rx="8" fill="#1E3A8A" stroke="#111" stroke-width="2"/>
-          <rect x="166" y="88" width="22" height="52" rx="8" fill="#1E3A8A" stroke="#111" stroke-width="2"/>
-          <!-- 書包主袋（鮮明亮黃色，低視能極易辨識） -->
-          <path d="M66 64 C66 40, 86 28, 120 28 C154 28, 174 40, 174 64 L178 142 C178 150, 172 154, 162 154 L78 154 C68 154, 62 150, 62 142 Z" fill="#FFB800" stroke="#222" stroke-width="3"/>
-          <!-- 主袋拉鍊弧線 -->
-          <path d="M74 68 C74 48, 92 40, 120 40 C148 40, 166 48, 166 68" fill="none" stroke="#1E3A8A" stroke-width="4" stroke-dasharray="6,4"/>
-          <!-- 前置拉鍊小袋 -->
-          <rect x="80" y="92" width="80" height="52" rx="12" fill="#1E3A8A" stroke="#111" stroke-width="2.5"/>
-          <line x1="88" y1="108" x2="152" y2="108" stroke="#FFFFFF" stroke-width="3.5" stroke-linecap="round"/>
-          <rect x="116" y="108" width="8" height="12" rx="2" fill="#FFD600"/>
-        </svg>`
+        id: 'schoolbag',
+        name: '書包',
+        category: 'daily',
+        imageUrl: 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?auto=format&fit=crop&w=800&q=80',
+        backupUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/41/Backpack_01.jpg/800px-Backpack_01.jpg'
       },
       {
-        id: 'wheelchair', name: '輪椅', category: 'daily',
-        svg: `<svg viewBox="0 0 240 180" width="100%" height="100%">
-          <rect width="240" height="180" rx="16" fill="#EEF2F6"/>
-          <ellipse cx="122" cy="158" rx="74" ry="7" fill="rgba(0,0,0,0.22)"/>
-          <!-- 推手把與高背椅背 -->
-          <path d="M62 28 L76 28 L76 96 L148 96 L166 138 L184 138" fill="none" stroke="#2C3E50" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
-          <!-- 黑色透氣椅背墊 -->
-          <rect x="68" y="34" width="14" height="58" rx="4" fill="#1A1A1D"/>
-          <!-- 黑色厚坐墊 -->
-          <rect x="76" y="88" width="74" height="13" rx="5" fill="#1A1A1D"/>
-          <!-- 扶手 -->
-          <path d="M76 66 L138 66 L138 88" fill="none" stroke="#475569" stroke-width="6" stroke-linecap="round"/>
-          <!-- 腳踏板 -->
-          <rect x="162" y="135" width="26" height="7" rx="3" fill="#1A1A1D"/>
-          <!-- 前方萬向小輪 -->
-          <circle cx="154" cy="144" r="13" fill="#1E293B" stroke="#000" stroke-width="2"/>
-          <circle cx="154" cy="144" r="5" fill="#CBD5E1"/>
-          <!-- 後方大驅動輪與銀色手推圈 -->
-          <circle cx="92" cy="122" r="35" fill="none" stroke="#18181B" stroke-width="8"/>
-          <circle cx="92" cy="122" r="26" fill="none" stroke="#94A3B8" stroke-width="3.5"/>
-          <!-- 輻條 -->
-          <line x1="92" y1="88" x2="92" y2="156" stroke="#64748B" stroke-width="2.5"/>
-          <line x1="58" y1="122" x2="126" y2="122" stroke="#64748B" stroke-width="2.5"/>
-          <line x1="68" y1="98" x2="116" y2="146" stroke="#64748B" stroke-width="2.5"/>
-          <line x1="116" y1="98" x2="68" y2="146" stroke="#64748B" stroke-width="2.5"/>
-          <circle cx="92" cy="122" r="7" fill="#1E293B"/>
-        </svg>`
+        id: 'wheelchair',
+        name: '輪椅',
+        category: 'daily',
+        imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e5/Wheelchair_manual.jpg/800px-Wheelchair_manual.jpg',
+        backupUrl: 'https://images.unsplash.com/photo-1576765608535-5f04d1e3f289?auto=format&fit=crop&w=800&q=80'
       },
       {
-        id: 'towel', name: '毛巾', category: 'daily',
-        svg: `<svg viewBox="0 0 240 180" width="100%" height="100%">
-          <rect width="240" height="180" rx="16" fill="#F5F7FA"/>
-          <!-- 不鏽鋼毛巾掛架 -->
-          <rect x="28" y="32" width="184" height="10" rx="5" fill="#78909C" stroke="#37474F" stroke-width="2"/>
-          <circle cx="34" cy="37" r="8" fill="#546E7A"/>
-          <circle cx="206" cy="37" r="8" fill="#546E7A"/>
-          <!-- 掛在架上的柔軟藍色毛巾（前後兩層立體折疊） -->
-          <rect x="64" y="34" width="112" height="122" rx="6" fill="#4FC3F7" stroke="#0277BD" stroke-width="2.5"/>
-          <rect x="58" y="28" width="124" height="106" rx="8" fill="#81D4FA" stroke="#0277BD" stroke-width="2.5"/>
-          <!-- 毛巾織紋與底部白色條紋細節 -->
-          <rect x="59" y="110" width="122" height="8" fill="#FFFFFF"/>
-          <rect x="59" y="122" width="122" height="4" fill="#FFFFFF"/>
-          <!-- 毛巾底部流蘇邊 -->
-          <path d="M64 156 L64 164 M74 156 L74 164 M84 156 L84 164 M94 156 L94 164 M104 156 L104 164 M114 156 L114 164 M124 156 L124 164 M134 156 L134 164 M144 156 L144 164 M154 156 L154 164 M164 156 L164 164 M174 156 L174 164" stroke="#0277BD" stroke-width="3" stroke-linecap="round"/>
-        </svg>`
+        id: 'towel',
+        name: '毛巾',
+        category: 'daily',
+        imageUrl: 'https://images.unsplash.com/photo-1616627561839-074385245ff6?auto=format&fit=crop&w=800&q=80',
+        backupUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/Towels_folded.jpg/800px-Towels_folded.jpg'
       },
       {
-        id: 'sneakers', name: '波鞋', category: 'daily',
-        svg: `<svg viewBox="0 0 240 180" width="100%" height="100%">
-          <rect width="240" height="180" rx="16" fill="#FFF3F3"/>
-          <ellipse cx="122" cy="148" rx="92" ry="8" fill="rgba(0,0,0,0.22)"/>
-          <!-- 運動波鞋鞋身（鮮紅色 ＋ 白色運動標誌與厚鞋底） -->
-          <path d="M34 122 L34 68 C34 62, 42 60, 48 64 C58 72, 74 72, 86 60 L102 48 C108 44, 114 48, 118 56 L144 88 C168 92, 206 98, 210 116 L210 124 L34 124 Z" fill="#E52521" stroke="#1E1E1E" stroke-width="2.5" stroke-linejoin="round"/>
-          <!-- 白色鞋頭保護片 -->
-          <path d="M174 122 C180 106, 198 104, 210 116 L210 124 Z" fill="#FFFFFF" stroke="#1E1E1E" stroke-width="2"/>
-          <!-- 白色側邊動感線條 -->
-          <path d="M58 104 C92 106, 124 96, 146 86 L154 96 C128 110, 92 118, 56 114 Z" fill="#FFFFFF"/>
-          <!-- 白色鞋帶細節 -->
-          <line x1="112" y1="62" x2="128" y2="56" stroke="#FFFFFF" stroke-width="5" stroke-linecap="round"/>
-          <line x1="122" y1="72" x2="138" y2="66" stroke="#FFFFFF" stroke-width="5" stroke-linecap="round"/>
-          <line x1="132" y1="82" x2="148" y2="76" stroke="#FFFFFF" stroke-width="5" stroke-linecap="round"/>
-          <!-- 白色厚避震中底 -->
-          <rect x="30" y="122" width="184" height="15" rx="6" fill="#FFFFFF" stroke="#1E1E1E" stroke-width="2.5"/>
-          <!-- 黑色防滑鞋底 -->
-          <rect x="30" y="136" width="184" height="7" rx="3" fill="#222226"/>
-        </svg>`
+        id: 'sneakers',
+        name: '波鞋',
+        category: 'daily',
+        imageUrl: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=800&q=80',
+        backupUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a6/Running_shoes_01.jpg/800px-Running_shoes_01.jpg'
       }
     ];
+
+    // 離線或相片載入異常時的後備相片佔位圖
+    function makeFallbackDataUrl(label) {
+      const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300" viewBox="0 0 400 300">
+        <rect width="400" height="300" fill="#2C2C32"/>
+        <text x="200" y="160" font-size="48" font-weight="bold" fill="#FFFF00" text-anchor="middle" font-family="sans-serif">${label}</text>
+      </svg>`;
+      return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
+    }
 
     // === 自訂照片持久化管理（localStorage） ===
     const CUSTOM_STORAGE_KEY = 'smart_matcher_custom_items_v1';
@@ -1221,7 +1017,7 @@
       }
     }
 
-    // === 產生新一題（支援自訂照片與香港實物圖庫） ===
+    // === 產生新一題（全部使用真實相片） ===
     function generateQuestion() {
       if (state.isPaused) return;
       state.isLocked = false;
@@ -1233,7 +1029,6 @@
       }
       updateHeaderUI();
 
-      // 建立可用題庫
       let targetPool = [];
       let distractorPool = [];
 
@@ -1258,7 +1053,7 @@
       if (targetPool.length === 0) targetPool = [...BUILTIN_ITEMS];
       if (distractorPool.length < state.currentChoices) distractorPool = [...BUILTIN_ITEMS];
 
-      // 挑選目標物件（盡量避免連續兩題重複）
+      // 挑選目標相片（避免連續重複）
       const candidates = targetPool.length > 1
         ? targetPool.filter(item => item.id !== state.lastTargetId)
         : targetPool;
@@ -1266,7 +1061,7 @@
       state.targetItem = target;
       state.lastTargetId = target.id;
 
-      // 挑選干擾項（確保不與目標同名或同 ID）
+      // 挑選干擾項
       const distractors = distractorPool
         .filter(item => item.id !== target.id && item.name !== target.name)
         .sort(() => Math.random() - 0.5)
@@ -1279,7 +1074,7 @@
       promptBanner.textContent = questionText;
       speakCantonese(questionText, 1.12);
 
-      // 渲染卡片
+      // 渲染真實相片卡片
       choicesGrid.className = `choices-${state.currentChoices}` + (state.showText ? '' : ' hide-labels');
       choicesGrid.innerHTML = '';
 
@@ -1288,14 +1083,29 @@
         card.className = 'choice-card';
         card.dataset.id = item.id;
 
-        const mediaHtml = item.imageUrl
-          ? `<img class="choice-photo" src="${item.imageUrl}" alt="${item.name}" />`
-          : item.svg;
+        const photoBox = document.createElement('div');
+        photoBox.className = 'choice-photo-box';
 
-        card.innerHTML = `
-          <div class="choice-svg-box">${mediaHtml}</div>
-          <div class="choice-label">${item.name}</div>
-        `;
+        const img = document.createElement('img');
+        img.className = 'choice-photo';
+        img.alt = item.name;
+        img.src = item.imageUrl;
+        img.onerror = function() {
+          if (item.backupUrl && this.src !== item.backupUrl) {
+            this.src = item.backupUrl;
+          } else {
+            this.onerror = null;
+            this.src = makeFallbackDataUrl(item.name);
+          }
+        };
+
+        photoBox.appendChild(img);
+        card.appendChild(photoBox);
+
+        const labelDiv = document.createElement('div');
+        labelDiv.className = 'choice-label';
+        labelDiv.textContent = item.name;
+        card.appendChild(labelDiv);
 
         card.addEventListener('pointerdown', (e) => {
           e.preventDefault();
@@ -1439,7 +1249,7 @@
     const previewThumb = document.getElementById('custom-preview-thumb');
     const customListEl = document.getElementById('custom-items-list');
 
-    function compressImageFile(file, maxSize = 420) {
+    function compressImageFile(file, maxSize = 480) {
       return new Promise((resolve) => {
         const reader = new FileReader();
         reader.onload = (e) => {
@@ -1463,7 +1273,7 @@
             canvas.height = h;
             const ctx = canvas.getContext('2d');
             ctx.drawImage(img, 0, 0, w, h);
-            resolve(canvas.toDataURL('image/jpeg', 0.82));
+            resolve(canvas.toDataURL('image/jpeg', 0.85));
           };
           img.src = e.target.result;
         };
@@ -1474,7 +1284,7 @@
     fileInput.addEventListener('change', async (e) => {
       const file = e.target.files[0];
       if (!file) return;
-      pendingPhotoDataUrl = await compressImageFile(file, 420);
+      pendingPhotoDataUrl = await compressImageFile(file, 480);
       previewThumb.src = pendingPhotoDataUrl;
       previewBar.style.display = 'flex';
       if (!nameInput.value.trim()) {
@@ -1485,11 +1295,11 @@
     document.getElementById('add-custom-btn').addEventListener('click', () => {
       const cleanName = nameInput.value.trim();
       if (!pendingPhotoDataUrl) {
-        alert('請先按「📷 選擇照片 / 拍照」選取一張圖片！');
+        alert('請先按「📷 選擇照片 / 拍照」選取一張相片！');
         return;
       }
       if (!cleanName) {
-        alert('請輸入這張照片的名稱（例如：媽媽、陳老師、水壺）！');
+        alert('請輸入這張相片的名稱（例如：媽媽、陳老師、水壺）！');
         nameInput.focus();
         return;
       }

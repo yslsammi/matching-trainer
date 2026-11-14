@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <title>智選小達人 - 真實相片選辦訓練</title>
+  <title>智選小達人 - iPad 實拍相片選辦訓練</title>
   <style>
     :root {
       --bg-color: #000000;
@@ -120,8 +120,8 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 82px 16px 24px 16px;
-      gap: 20px;
+      padding: 80px 12px 20px 12px;
+      gap: 18px;
     }
 
     #prompt-banner {
@@ -140,22 +140,22 @@
       gap: clamp(18px, 3.5vw, 44px);
       width: 100%;
       flex: 1;
-      max-height: 70vh;
+      max-height: 74vh;
     }
 
-    /* 二選一專用：極致拉開至螢幕最左與最右兩端，中間留出超寬防誤觸安全區 */
+    /* 二選一專用：超大卡片 + 左右極致分開（貼近螢幕兩側，中間留明確分隔安全溝） */
     #choices-grid.choices-2 {
       width: 100vw;
       max-width: 100vw;
       justify-content: space-between;
-      padding: 0 clamp(14px, 2.2vw, 32px);
-      gap: 0;
+      padding: 0 clamp(14px, 2vw, 28px);
+      gap: clamp(48px, 10vw, 150px);
     }
 
     /* 圖片選擇卡片 */
     .choice-card {
       background-color: var(--card-bg);
-      border: 7px solid var(--card-border);
+      border: 8px solid var(--card-border);
       border-radius: 30px;
       display: flex;
       flex-direction: column;
@@ -168,20 +168,22 @@
       box-shadow: 0 10px 28px rgba(0, 0, 0, 0.45);
     }
 
-    /* 依選項數量自動調整大卡片尺寸 */
+    /* 一選一：特大置中卡片 */
     .choices-1 .choice-card {
-      width: min(64vw, 460px);
-      height: min(60vh, 460px);
+      width: min(68vw, 520px);
+      height: min(64vh, 520px);
     }
 
+    /* 二選一：維持超大視覺面積，同時推向左右兩端分開 */
     .choices-2 .choice-card {
-      width: min(30vw, 330px);
-      height: min(52vh, 390px);
+      width: min(41vw, 500px);
+      height: min(62vh, 500px);
     }
 
+    /* 三選一：三張並排大卡片 */
     .choices-3 .choice-card {
-      width: min(29vw, 350px);
-      height: min(50vh, 380px);
+      width: min(30vw, 390px);
+      height: min(55vh, 430px);
     }
 
     .choice-card:active {
@@ -189,8 +191,8 @@
     }
 
     .choice-photo-box {
-      width: 92%;
-      height: 76%;
+      width: 94%;
+      height: 78%;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -209,7 +211,7 @@
 
     .choice-label {
       margin-top: 12px;
-      font-size: clamp(1.6rem, 3vw, 2.5rem);
+      font-size: clamp(1.7rem, 3.2vw, 2.7rem);
       font-weight: 900;
       color: var(--subtext-color);
       letter-spacing: 2px;
@@ -220,21 +222,21 @@
     }
 
     .hide-labels .choice-photo-box {
-      width: 95%;
-      height: 92%;
+      width: 96%;
+      height: 94%;
     }
 
     /* 答對與錯誤提示狀態 */
     .choice-card.correct-hit {
       border-color: #00FF00 !important;
       box-shadow: 0 0 40px rgba(0, 255, 0, 0.85);
-      transform: scale(1.06);
+      transform: scale(1.04);
       z-index: 15;
     }
 
     .choice-card.wrong-dimmed {
       opacity: 0.28;
-      transform: scale(0.93);
+      transform: scale(0.95);
       border-color: #666666;
     }
 
@@ -249,7 +251,7 @@
       }
       50% {
         box-shadow: 0 0 42px rgba(0, 255, 0, 1);
-        transform: scale(1.04);
+        transform: scale(1.03);
         border-color: #00FF00;
       }
     }
@@ -363,7 +365,7 @@
       background-color: var(--panel-bg);
       color: #FFFFFF;
       width: 100%;
-      max-width: 860px;
+      max-width: 900px;
       max-height: 92vh;
       overflow-y: auto;
       border-radius: 20px;
@@ -413,7 +415,7 @@
     }
 
     .setting-group {
-      margin-bottom: 18px;
+      margin-bottom: 20px;
     }
 
     .setting-group label {
@@ -447,7 +449,7 @@
       border-color: #FFFF00;
     }
 
-    /* 自訂照片上傳區樣式 */
+    /* iPad 批量上傳 & 單題換相管理區 */
     .custom-upload-box {
       background: #232328;
       border: 2px dashed #55555E;
@@ -465,77 +467,98 @@
     .file-pick-btn {
       background: #00D4FF;
       color: #000000;
-      padding: 10px 16px;
-      border-radius: 10px;
-      font-weight: 800;
-      font-size: 0.95rem;
+      padding: 12px 18px;
+      border-radius: 12px;
+      font-weight: 900;
+      font-size: 1rem;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
       gap: 6px;
     }
 
-    #custom-name-input {
-      background: #141417;
-      color: #FFFFFF;
-      border: 2px solid #555;
-      border-radius: 10px;
-      padding: 10px 14px;
-      font-size: 1rem;
-      flex: 1;
-      min-width: 170px;
-      user-select: text;
-      -webkit-user-select: text;
-    }
-
-    #custom-name-input:focus {
-      outline: none;
-      border-color: #FFFF00;
-    }
-
-    #add-custom-btn {
-      background: #00FF00;
+    .camera-pick-btn {
+      background: #FFB800;
       color: #000000;
-      border: none;
-      border-radius: 10px;
-      padding: 10px 18px;
-      font-size: 0.98rem;
-      font-weight: 800;
+      padding: 12px 18px;
+      border-radius: 12px;
+      font-weight: 900;
+      font-size: 1rem;
       cursor: pointer;
-    }
-
-    #custom-preview-bar {
-      display: none;
+      display: inline-flex;
       align-items: center;
-      gap: 12px;
-      margin-top: 12px;
-      padding: 8px 12px;
-      background: #18181C;
-      border-radius: 10px;
-      font-size: 0.9rem;
-      color: #FFFF00;
+      gap: 6px;
     }
 
-    #custom-preview-thumb {
-      width: 48px;
-      height: 48px;
-      object-fit: cover;
-      border-radius: 8px;
-      border: 2px solid #FFFF00;
-    }
-
-    #custom-items-list {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    /* 批量待確認清單 */
+    #pending-batch-list {
+      display: flex;
+      flex-direction: column;
       gap: 10px;
       margin-top: 14px;
     }
 
-    .custom-item-chip {
-      background: #2E2E34;
+    .pending-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: #16161A;
+      border: 2px solid #FFFF00;
+      border-radius: 12px;
+      padding: 8px 12px;
+    }
+
+    .pending-row img {
+      width: 58px;
+      height: 58px;
+      object-fit: cover;
+      border-radius: 8px;
+    }
+
+    .pending-row input {
+      background: #2A2A30;
+      color: #FFFFFF;
+      border: 2px solid #666;
+      border-radius: 8px;
+      padding: 8px 12px;
+      font-size: 1rem;
+      flex: 1;
+      user-select: text;
+      -webkit-user-select: text;
+    }
+
+    .pending-row input:focus {
+      outline: none;
+      border-color: #00FF00;
+    }
+
+    #save-batch-btn {
+      display: none;
+      margin-top: 12px;
+      width: 100%;
+      background: #00FF00;
+      color: #000000;
+      border: none;
+      border-radius: 12px;
+      padding: 12px;
+      font-size: 1.05rem;
+      font-weight: 900;
+      cursor: pointer;
+    }
+
+    /* 已儲存相片與內置題目換相網格 */
+    .items-manage-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(135px, 1fr));
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    .manage-card {
+      background: #2B2B32;
       border: 1px solid #4A4A52;
       border-radius: 12px;
-      padding: 8px;
+      padding: 10px 8px;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -543,33 +566,45 @@
       text-align: center;
     }
 
-    .custom-item-chip img {
-      width: 68px;
-      height: 68px;
+    .manage-card img {
+      width: 82px;
+      height: 82px;
       object-fit: cover;
-      border-radius: 8px;
+      border-radius: 10px;
+      margin-bottom: 6px;
+      background: #1C1C20;
+    }
+
+    .manage-card .item-title {
+      font-size: 0.96rem;
+      font-weight: 800;
+      color: #FFFFFF;
       margin-bottom: 6px;
     }
 
-    .custom-item-chip span {
-      font-size: 0.92rem;
-      font-weight: 700;
+    .replace-photo-btn {
+      background: #3B82F6;
       color: #FFFFFF;
-      word-break: break-all;
+      border: none;
+      border-radius: 8px;
+      padding: 5px 10px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      cursor: pointer;
     }
 
     .del-chip-btn {
       position: absolute;
       top: -6px;
       right: -6px;
-      width: 24px;
-      height: 24px;
+      width: 26px;
+      height: 26px;
       border-radius: 50%;
       background: #FF3B30;
       color: #FFFFFF;
       border: none;
       font-weight: 900;
-      font-size: 0.85rem;
+      font-size: 0.88rem;
       cursor: pointer;
       display: flex;
       align-items: center;
@@ -615,6 +650,9 @@
 </head>
 <body>
 
+  <!-- 隱藏的單題換相 input -->
+  <input type="file" id="replace-single-input" accept="image/*" style="display:none;" />
+
   <!-- 教師設定按鈕（左上角單按 1 下即開啟） -->
   <div id="teacher-trigger" title="開啟教師設定">
     <svg class="gear-icon" viewBox="0 0 24 24">
@@ -639,9 +677,9 @@
   <div id="start-overlay">
     <div style="font-size: 5rem;">📸</div>
     <h1 style="font-size: 2.6rem; color: #FFFF00; margin: 12px 0;">智選小達人</h1>
-    <p style="font-size: 1.2rem; color: #CCCCCC; max-width: 520px; line-height: 1.6;">
-      真實相片選辦訓練（一選一 → 二選一 → 三選一）<br/>
-      <span style="font-size: 0.95rem; color: #888;">（進入後按一下左上角齒輪即可開啟教師設定及上傳自訂照片）</span>
+    <p style="font-size: 1.2rem; color: #CCCCCC; max-width: 540px; line-height: 1.6;">
+      實拍相片選辦訓練（支援 iPad 即時拍照與批量上傳相片）<br/>
+      <span style="font-size: 0.95rem; color: #888;">（進入後按一下左上角齒輪即可開啟教師設定及上傳相片）</span>
     </p>
     <button class="big-start-btn" id="start-btn">開始訓練</button>
   </div>
@@ -661,7 +699,7 @@
   <div id="teacher-panel">
     <div class="panel-card">
       <div class="panel-header">
-        <h2>👩‍🏫 教師選辦訓練設定與評估</h2>
+        <h2>👩‍🏫 教師選辦訓練設定與 iPad 相片管理</h2>
         <span style="font-size: 0.9rem; color: #AAA;">設定即時生效</span>
       </div>
 
@@ -686,7 +724,7 @@
         <div class="btn-group" data-setting="stageMode">
           <button class="opt-btn active" data-val="auto">自動進階（一選一 → 二選一 → 三選一）</button>
           <button class="opt-btn" data-val="1">固定：一選一（建立指認因果）</button>
-          <button class="opt-btn" data-val="2">固定：二選一（左右兩端分開辨識）</button>
+          <button class="opt-btn" data-val="2">固定：二選一（左右兩端分開大卡片）</button>
           <button class="opt-btn" data-val="3">固定：三選一（多重視覺搜尋）</button>
         </div>
       </div>
@@ -695,12 +733,12 @@
       <div class="setting-group">
         <label>2. 訓練相片題庫來源與主題</label>
         <div class="btn-group" data-setting="category">
-          <button class="opt-btn active" data-val="all">全部真實相片（9 款 ＋ 自訂照片）</button>
+          <button class="opt-btn active" data-val="all">全部相片（內置 9 款 ＋ 老師上傳相片）</button>
           <button class="opt-btn" data-val="vehicle">香港交通工具（的士、地鐵、巴士、復康巴士）</button>
           <button class="opt-btn" data-val="daily">日常用品（牙刷、書包、輪椅、毛巾、波鞋）</button>
-          <button class="opt-btn" data-val="custom">⭐ 只用老師自訂照片（家人 / 同學 / 實物）</button>
+          <button class="opt-btn" data-val="custom">⭐ 只用老師上傳的 iPad 相片</button>
         </div>
-        <div id="custom-warning-msg">⚠️ 提示：自訂照片數量不足目前選辦選項數（建議至少上傳 3 張），系統將暫時自動補入內置相片配對。</div>
+        <div id="custom-warning-msg">⚠️ 提示：自訂相片數量不足目前選項數（建議至少上傳 3 張），系統將暫時自動補入內置相片配對。</div>
       </div>
 
       <!-- 3. 卡片是否顯示文字名稱 -->
@@ -741,22 +779,32 @@
         </div>
       </div>
 
-      <!-- 7. 上傳自訂照片與名稱 -->
+      <!-- 7. iPad 批量上傳新相片 / 即場拍照 -->
       <div class="setting-group">
-        <label>7. 上傳自訂實拍照片（學生家人、同學、老師或真實課室物品）</label>
+        <label>7. 用 iPad 批量上傳新相片或即場拍照（永久儲存在此 iPad）</label>
         <div class="custom-upload-box">
           <div class="upload-controls">
-            <label for="custom-photo-file" class="file-pick-btn">📷 選擇照片 / 拍照</label>
-            <input type="file" id="custom-photo-file" accept="image/*" style="display:none;" />
-            <input type="text" id="custom-name-input" placeholder="輸入名稱（例如：媽媽、陳老師、水壺）" maxlength="16" />
-            <button type="button" id="add-custom-btn">➕ 加入題庫</button>
+            <label for="batch-photo-file" class="file-pick-btn">🖼️ 從 iPad 相簿批量選取多張相片</label>
+            <input type="file" id="batch-photo-file" accept="image/*" multiple style="display:none;" />
+
+            <label for="camera-photo-file" class="camera-pick-btn">📸 用 iPad 相機即場影相</label>
+            <input type="file" id="camera-photo-file" accept="image/*" capture="environment" style="display:none;" />
           </div>
-          <div id="custom-preview-bar">
-            <img id="custom-preview-thumb" src="" alt="預覽" />
-            <span>已選取照片！請在上方輸入名稱後按「加入題庫」</span>
+
+          <div id="pending-batch-list"></div>
+          <button type="button" id="save-batch-btn">✅ 確認將以上相片全部加入題庫</button>
+
+          <div style="margin-top: 16px; font-weight: 700; color: #FFFF00; font-size: 0.95rem;">
+            已上傳的自訂相片（<span id="custom-count-label">0</span> 張）：
           </div>
-          <div id="custom-items-list"></div>
+          <div class="items-manage-grid" id="custom-items-list"></div>
         </div>
+      </div>
+
+      <!-- 8. 內置 9 款香港實物相片（可逐一用 iPad 換成自己影的真實相片） -->
+      <div class="setting-group">
+        <label>8. 內置 9 款題庫相片（按「📷 換相」可直接用 iPad 相片替換任何一題）</label>
+        <div class="items-manage-grid" id="builtin-items-list"></div>
       </div>
 
       <div class="panel-footer">
@@ -767,107 +815,119 @@
   </div>
 
   <script>
-    // === 9 款真實攝影相片題庫（香港交通工具 ＋ 日常生活實物） ===
-    const BUILTIN_ITEMS = [
+    // === 內置 9 款香港生活實物與交通工具題庫（採用高穩定度 Wikimedia 真實相片 + 支援一鍵替換） ===
+    const DEFAULT_BUILTIN_ITEMS = [
       {
         id: 'hk_taxi',
         name: '的士',
         category: 'vehicle',
-        imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/Hong_Kong_Taxi_2014.jpg/800px-Hong_Kong_Taxi_2014.jpg',
-        backupUrl: 'https://images.unsplash.com/photo-1556122071-e404eaedb77f?auto=format&fit=crop&w=800&q=80'
+        imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/Hong_Kong_Taxi_2014.jpg/640px-Hong_Kong_Taxi_2014.jpg'
       },
       {
         id: 'hk_mtr',
         name: '地鐵',
         category: 'vehicle',
-        imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6d/MTR_M-Train_at_Kowloon_Bay_Station.jpg/800px-MTR_M-Train_at_Kowloon_Bay_Station.jpg',
-        backupUrl: 'https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=800&q=80'
+        imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6d/MTR_M-Train_at_Kowloon_Bay_Station.jpg/640px-MTR_M-Train_at_Kowloon_Bay_Station.jpg'
       },
       {
         id: 'hk_bus',
         name: '巴士',
         category: 'vehicle',
-        imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a3/KMB_ATENU1000_UB8222.jpg/800px-KMB_ATENU1000_UB8222.jpg',
-        backupUrl: 'https://images.unsplash.com/photo-1570125909232-eb263c188f7e?auto=format&fit=crop&w=800&q=80'
+        imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a3/KMB_ATENU1000_UB8222.jpg/640px-KMB_ATENU1000_UB8222.jpg'
       },
       {
         id: 'hk_rehabus',
         name: '復康巴士',
         category: 'vehicle',
-        imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/Rehabus_HK_Toyota_Coaster.jpg/800px-Rehabus_HK_Toyota_Coaster.jpg',
-        backupUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/Wheelchair_accessible_van.jpg/800px-Wheelchair_accessible_van.jpg'
+        imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/Rehabus_HK_Toyota_Coaster.jpg/640px-Rehabus_HK_Toyota_Coaster.jpg'
       },
       {
         id: 'toothbrush',
         name: '牙刷',
         category: 'daily',
-        imageUrl: 'https://images.unsplash.com/photo-1559591937-e68214382829?auto=format&fit=crop&w=800&q=80',
-        backupUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c8/Toothbrush_with_toothpaste.jpg/800px-Toothbrush_with_toothpaste.jpg'
+        imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c8/Toothbrush_with_toothpaste.jpg/640px-Toothbrush_with_toothpaste.jpg'
       },
       {
         id: 'schoolbag',
         name: '書包',
         category: 'daily',
-        imageUrl: 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?auto=format&fit=crop&w=800&q=80',
-        backupUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/41/Backpack_01.jpg/800px-Backpack_01.jpg'
+        imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/41/Backpack_01.jpg/640px-Backpack_01.jpg'
       },
       {
         id: 'wheelchair',
         name: '輪椅',
         category: 'daily',
-        imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e5/Wheelchair_manual.jpg/800px-Wheelchair_manual.jpg',
-        backupUrl: 'https://images.unsplash.com/photo-1576765608535-5f04d1e3f289?auto=format&fit=crop&w=800&q=80'
+        imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e5/Wheelchair_manual.jpg/640px-Wheelchair_manual.jpg'
       },
       {
         id: 'towel',
         name: '毛巾',
         category: 'daily',
-        imageUrl: 'https://images.unsplash.com/photo-1616627561839-074385245ff6?auto=format&fit=crop&w=800&q=80',
-        backupUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/Towels_folded.jpg/800px-Towels_folded.jpg'
+        imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/Towels_folded.jpg/640px-Towels_folded.jpg'
       },
       {
         id: 'sneakers',
         name: '波鞋',
         category: 'daily',
-        imageUrl: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=800&q=80',
-        backupUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a6/Running_shoes_01.jpg/800px-Running_shoes_01.jpg'
+        imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a6/Running_shoes_01.jpg/640px-Running_shoes_01.jpg'
       }
     ];
 
-    // 離線或相片載入異常時的後備相片佔位圖
-    function makeFallbackDataUrl(label) {
-      const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300" viewBox="0 0 400 300">
-        <rect width="400" height="300" fill="#2C2C32"/>
-        <text x="200" y="160" font-size="48" font-weight="bold" fill="#FFFF00" text-anchor="middle" font-family="sans-serif">${label}</text>
-      </svg>`;
-      return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
-    }
+    // === localStorage 儲存鍵名 ===
+    const CUSTOM_STORAGE_KEY = 'smart_matcher_custom_items_v2';
+    const OVERRIDE_STORAGE_KEY = 'smart_matcher_builtin_overrides_v2';
 
-    // === 自訂照片持久化管理（localStorage） ===
-    const CUSTOM_STORAGE_KEY = 'smart_matcher_custom_items_v1';
     let customItems = [];
-    let pendingPhotoDataUrl = null;
+    let builtinOverrides = {}; // { hk_taxi: 'data:image/jpeg;base64,...' }
+    let pendingBatchItems = []; // [{ name, imageUrl }]
+    let replacingTargetId = null;
 
-    function loadCustomItems() {
+    function loadSavedPhotos() {
       try {
-        const raw = localStorage.getItem(CUSTOM_STORAGE_KEY);
-        if (raw) {
-          customItems = JSON.parse(raw);
-        }
-      } catch (e) {
-        customItems = [];
-      }
+        const rawCustom = localStorage.getItem(CUSTOM_STORAGE_KEY);
+        if (rawCustom) customItems = JSON.parse(rawCustom);
+      } catch (e) { customItems = []; }
+
+      try {
+        const rawOverrides = localStorage.getItem(OVERRIDE_STORAGE_KEY);
+        if (rawOverrides) builtinOverrides = JSON.parse(rawOverrides);
+      } catch (e) { builtinOverrides = {}; }
     }
 
     function saveCustomItems() {
       try {
         localStorage.setItem(CUSTOM_STORAGE_KEY, JSON.stringify(customItems));
       } catch (e) {
-        alert('儲存空間已滿，請先刪除部分舊照片再新增。');
+        alert('iPad 瀏覽器儲存空間已滿，請先刪除部分舊相片再新增。');
       }
     }
 
-    loadCustomItems();
+    function saveBuiltinOverrides() {
+      try {
+        localStorage.setItem(OVERRIDE_STORAGE_KEY, JSON.stringify(builtinOverrides));
+      } catch (e) {
+        alert('iPad 瀏覽器儲存空間已滿，請先刪除部分舊相片。');
+      }
+    }
+
+    function getBuiltinItems() {
+      return DEFAULT_BUILTIN_ITEMS.map(item => ({
+        ...item,
+        imageUrl: builtinOverrides[item.id] || item.imageUrl
+      }));
+    }
+
+    loadSavedPhotos();
+
+    // 離線或網址失效時的後備文字卡片
+    function makeFallbackDataUrl(label) {
+      const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300" viewBox="0 0 400 300">
+        <rect width="400" height="300" fill="#2C2C32"/>
+        <text x="200" y="145" font-size="44" font-weight="bold" fill="#FFFF00" text-anchor="middle" font-family="sans-serif">${label}</text>
+        <text x="200" y="195" font-size="20" fill="#CCCCCC" text-anchor="middle" font-family="sans-serif">可於設定按「換相」上傳相片</text>
+      </svg>`;
+      return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
+    }
 
     // === 遊戲狀態 ===
     const state = {
@@ -1017,7 +1077,7 @@
       }
     }
 
-    // === 產生新一題（全部使用真實相片） ===
+    // === 產生新一題 ===
     function generateQuestion() {
       if (state.isPaused) return;
       state.isLocked = false;
@@ -1029,6 +1089,7 @@
       }
       updateHeaderUI();
 
+      const builtinItems = getBuiltinItems();
       let targetPool = [];
       let distractorPool = [];
 
@@ -1037,23 +1098,22 @@
           targetPool = [...customItems];
           distractorPool = customItems.length >= state.currentChoices
             ? [...customItems]
-            : [...customItems, ...BUILTIN_ITEMS];
+            : [...customItems, ...builtinItems];
         } else {
-          targetPool = [...BUILTIN_ITEMS];
-          distractorPool = [...BUILTIN_ITEMS];
+          targetPool = [...builtinItems];
+          distractorPool = [...builtinItems];
         }
       } else if (state.category === 'all') {
-        targetPool = [...customItems, ...BUILTIN_ITEMS];
+        targetPool = [...customItems, ...builtinItems];
         distractorPool = [...targetPool];
       } else {
-        targetPool = BUILTIN_ITEMS.filter(item => item.category === state.category);
+        targetPool = builtinItems.filter(item => item.category === state.category);
         distractorPool = [...targetPool];
       }
 
-      if (targetPool.length === 0) targetPool = [...BUILTIN_ITEMS];
-      if (distractorPool.length < state.currentChoices) distractorPool = [...BUILTIN_ITEMS];
+      if (targetPool.length === 0) targetPool = [...builtinItems];
+      if (distractorPool.length < state.currentChoices) distractorPool = [...builtinItems];
 
-      // 挑選目標相片（避免連續重複）
       const candidates = targetPool.length > 1
         ? targetPool.filter(item => item.id !== state.lastTargetId)
         : targetPool;
@@ -1061,7 +1121,6 @@
       state.targetItem = target;
       state.lastTargetId = target.id;
 
-      // 挑選干擾項
       const distractors = distractorPool
         .filter(item => item.id !== target.id && item.name !== target.name)
         .sort(() => Math.random() - 0.5)
@@ -1069,12 +1128,10 @@
 
       const options = [target, ...distractors].sort(() => Math.random() - 0.5);
 
-      // 更新題目文字與廣東話語音提問
       const questionText = `邊個係${target.name}呀？`;
       promptBanner.textContent = questionText;
       speakCantonese(questionText, 1.12);
 
-      // 渲染真實相片卡片
       choicesGrid.className = `choices-${state.currentChoices}` + (state.showText ? '' : ' hide-labels');
       choicesGrid.innerHTML = '';
 
@@ -1091,12 +1148,8 @@
         img.alt = item.name;
         img.src = item.imageUrl;
         img.onerror = function() {
-          if (item.backupUrl && this.src !== item.backupUrl) {
-            this.src = item.backupUrl;
-          } else {
-            this.onerror = null;
-            this.src = makeFallbackDataUrl(item.name);
-          }
+          this.onerror = null;
+          this.src = makeFallbackDataUrl(item.name);
         };
 
         photoBox.appendChild(img);
@@ -1242,14 +1295,8 @@
       generateQuestion();
     });
 
-    // === 自訂照片上傳與自動壓縮處理 ===
-    const fileInput = document.getElementById('custom-photo-file');
-    const nameInput = document.getElementById('custom-name-input');
-    const previewBar = document.getElementById('custom-preview-bar');
-    const previewThumb = document.getElementById('custom-preview-thumb');
-    const customListEl = document.getElementById('custom-items-list');
-
-    function compressImageFile(file, maxSize = 480) {
+    // === iPad 圖片壓縮與批量上傳處理 ===
+    function compressImageFile(file, maxSize = 520) {
       return new Promise((resolve) => {
         const reader = new FileReader();
         reader.onload = (e) => {
@@ -1273,7 +1320,7 @@
             canvas.height = h;
             const ctx = canvas.getContext('2d');
             ctx.drawImage(img, 0, 0, w, h);
-            resolve(canvas.toDataURL('image/jpeg', 0.85));
+            resolve(canvas.toDataURL('image/jpeg', 0.82));
           };
           img.src = e.target.result;
         };
@@ -1281,62 +1328,190 @@
       });
     }
 
-    fileInput.addEventListener('change', async (e) => {
-      const file = e.target.files[0];
-      if (!file) return;
-      pendingPhotoDataUrl = await compressImageFile(file, 480);
-      previewThumb.src = pendingPhotoDataUrl;
-      previewBar.style.display = 'flex';
-      if (!nameInput.value.trim()) {
-        nameInput.focus();
+    const batchFileInput = document.getElementById('batch-photo-file');
+    const cameraFileInput = document.getElementById('camera-photo-file');
+    const pendingListEl = document.getElementById('pending-batch-list');
+    const saveBatchBtn = document.getElementById('save-batch-btn');
+
+    async function handleIncomingFiles(fileList) {
+      const files = Array.from(fileList || []);
+      if (files.length === 0) return;
+
+      for (const file of files) {
+        const dataUrl = await compressImageFile(file, 520);
+        // 預設用去掉副檔名的檔名（若是 IMG_1234 則留空方便老師直接打廣東話名稱）
+        let baseName = file.name.replace(/\.[^/.]+$/, '');
+        if (/^(IMG|DSC|PXL|Screenshot|image)_?\d*/i.test(baseName)) {
+          baseName = '';
+        }
+        pendingBatchItems.push({
+          name: baseName,
+          imageUrl: dataUrl
+        });
       }
+      renderPendingBatchList();
+    }
+
+    batchFileInput.addEventListener('change', async (e) => {
+      await handleIncomingFiles(e.target.files);
+      e.target.value = '';
     });
 
-    document.getElementById('add-custom-btn').addEventListener('click', () => {
-      const cleanName = nameInput.value.trim();
-      if (!pendingPhotoDataUrl) {
-        alert('請先按「📷 選擇照片 / 拍照」選取一張相片！');
+    cameraFileInput.addEventListener('change', async (e) => {
+      await handleIncomingFiles(e.target.files);
+      e.target.value = '';
+    });
+
+    function renderPendingBatchList() {
+      pendingListEl.innerHTML = '';
+      if (pendingBatchItems.length === 0) {
+        saveBatchBtn.style.display = 'none';
         return;
       }
-      if (!cleanName) {
-        alert('請輸入這張相片的名稱（例如：媽媽、陳老師、水壺）！');
-        nameInput.focus();
-        return;
+      saveBatchBtn.style.display = 'block';
+
+      pendingBatchItems.forEach((item, idx) => {
+        const row = document.createElement('div');
+        row.className = 'pending-row';
+
+        const img = document.createElement('img');
+        img.src = item.imageUrl;
+
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.placeholder = '請輸入這張相片名稱（例如：的士、媽媽、水壺）';
+        input.value = item.name;
+        input.maxLength = 16;
+        input.addEventListener('input', (e) => {
+          pendingBatchItems[idx].name = e.target.value;
+        });
+
+        const delBtn = document.createElement('button');
+        delBtn.type = 'button';
+        delBtn.textContent = '刪除';
+        delBtn.style.cssText = 'background:#FF3B30;color:#fff;border:none;border-radius:8px;padding:8px 12px;font-weight:700;cursor:pointer;';
+        delBtn.addEventListener('click', () => {
+          pendingBatchItems.splice(idx, 1);
+          renderPendingBatchList();
+        });
+
+        row.appendChild(img);
+        row.appendChild(input);
+        row.appendChild(delBtn);
+        pendingListEl.appendChild(row);
+      });
+
+      const firstEmpty = pendingListEl.querySelector('input[value=""]');
+      if (firstEmpty) firstEmpty.focus();
+    }
+
+    saveBatchBtn.addEventListener('click', () => {
+      for (let i = 0; i < pendingBatchItems.length; i++) {
+        if (!pendingBatchItems[i].name.trim()) {
+          alert(`第 ${i + 1} 張相片還未輸入名稱，請先填寫名稱！`);
+          return;
+        }
       }
 
-      customItems.push({
-        id: 'custom_' + Date.now() + '_' + Math.floor(Math.random() * 1000),
-        name: cleanName,
-        category: 'custom',
-        imageUrl: pendingPhotoDataUrl
+      pendingBatchItems.forEach((item, idx) => {
+        customItems.push({
+          id: 'custom_' + Date.now() + '_' + idx + '_' + Math.floor(Math.random() * 1000),
+          name: item.name.trim(),
+          category: 'custom',
+          imageUrl: item.imageUrl
+        });
       });
 
       saveCustomItems();
-      pendingPhotoDataUrl = null;
-      fileInput.value = '';
-      nameInput.value = '';
-      previewBar.style.display = 'none';
-      renderCustomItemsList();
+      pendingBatchItems = [];
+      renderPendingBatchList();
+      renderManageLists();
       checkCustomWarning();
     });
 
-    function renderCustomItemsList() {
+    // === 單題一鍵換相處理 ===
+    const replaceSingleInput = document.getElementById('replace-single-input');
+
+    replaceSingleInput.addEventListener('change', async (e) => {
+      const file = e.target.files[0];
+      if (!file || !replacingTargetId) return;
+      const dataUrl = await compressImageFile(file, 520);
+
+      // 檢查是內置題目還是自訂題目
+      const customIdx = customItems.findIndex(c => c.id === replacingTargetId);
+      if (customIdx !== -1) {
+        customItems[customIdx].imageUrl = dataUrl;
+        saveCustomItems();
+      } else {
+        builtinOverrides[replacingTargetId] = dataUrl;
+        saveBuiltinOverrides();
+      }
+
+      replacingTargetId = null;
+      e.target.value = '';
+      renderManageLists();
+    });
+
+    function renderManageLists() {
+      // 1. 渲染老師上傳的自訂相片
+      const customListEl = document.getElementById('custom-items-list');
+      document.getElementById('custom-count-label').textContent = customItems.length;
       customListEl.innerHTML = '';
+
       customItems.forEach((item, idx) => {
-        const chip = document.createElement('div');
-        chip.className = 'custom-item-chip';
-        chip.innerHTML = `
-          <button type="button" class="del-chip-btn" title="刪除此照片">✕</button>
+        const card = document.createElement('div');
+        card.className = 'manage-card';
+        card.innerHTML = `
+          <button type="button" class="del-chip-btn" title="刪除此相片">✕</button>
           <img src="${item.imageUrl}" alt="${item.name}" />
-          <span>${item.name}</span>
+          <div class="item-title">${item.name}</div>
+          <button type="button" class="replace-photo-btn">📷 換相</button>
         `;
-        chip.querySelector('.del-chip-btn').addEventListener('click', () => {
+        card.querySelector('.del-chip-btn').addEventListener('click', () => {
           customItems.splice(idx, 1);
           saveCustomItems();
-          renderCustomItemsList();
+          renderManageLists();
           checkCustomWarning();
         });
-        customListEl.appendChild(chip);
+        card.querySelector('.replace-photo-btn').addEventListener('click', () => {
+          replacingTargetId = item.id;
+          replaceSingleInput.click();
+        });
+        customListEl.appendChild(card);
+      });
+
+      // 2. 渲染內置 9 款題庫（每題都可直接按「📷 換相」換成 iPad 真實相片）
+      const builtinListEl = document.getElementById('builtin-items-list');
+      builtinListEl.innerHTML = '';
+      getBuiltinItems().forEach(item => {
+        const card = document.createElement('div');
+        card.className = 'manage-card';
+
+        const img = document.createElement('img');
+        img.src = item.imageUrl;
+        img.alt = item.name;
+        img.onerror = function() {
+          this.onerror = null;
+          this.src = makeFallbackDataUrl(item.name);
+        };
+
+        const titleDiv = document.createElement('div');
+        titleDiv.className = 'item-title';
+        titleDiv.textContent = item.name;
+
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'replace-photo-btn';
+        btn.textContent = '📷 iPad 換相';
+        btn.addEventListener('click', () => {
+          replacingTargetId = item.id;
+          replaceSingleInput.click();
+        });
+
+        card.appendChild(img);
+        card.appendChild(titleDiv);
+        card.appendChild(btn);
+        builtinListEl.appendChild(card);
       });
     }
 
@@ -1359,7 +1534,7 @@
     function openTeacherPanel() {
       state.isPaused = true;
       if ('speechSynthesis' in window) window.speechSynthesis.cancel();
-      renderCustomItemsList();
+      renderManageLists();
       checkCustomWarning();
       updateStatsUI();
       teacherPanel.style.display = 'flex';

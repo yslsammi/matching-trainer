@@ -1450,17 +1450,17 @@
       if (!audioCtx) return;
       const notes = [523.25, 659.25, 783.99, 1046.50];
       notes.forEach((freq, idx) => {
-        const now = audioCtx.currentTime + idx * 0.06;
+        const now = audioCtx.currentTime + idx * 0.05;
         const osc = audioCtx.createOscillator();
         const gain = audioCtx.createGain();
         osc.type = 'triangle';
         osc.frequency.setValueAtTime(freq, now);
-        gain.gain.setValueAtTime(0.22, now);
-        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.45);
+        gain.gain.setValueAtTime(0.18, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
         osc.connect(gain);
         gain.connect(audioCtx.destination);
         osc.start(now);
-        osc.stop(now + 0.45);
+        osc.stop(now + 0.35);
       });
     }
 
@@ -1471,12 +1471,12 @@
       const gain = audioCtx.createGain();
       osc.type = 'sine';
       osc.frequency.setValueAtTime(660, now);
-      gain.gain.setValueAtTime(0.14, now);
-      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.18);
+      gain.gain.setValueAtTime(0.12, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.14);
       osc.connect(gain);
       gain.connect(audioCtx.destination);
       osc.start(now);
-      osc.stop(now + 0.18);
+      osc.stop(now + 0.14);
     }
 
     function playGentleNudgeSound() {
@@ -1486,13 +1486,13 @@
       const gain = audioCtx.createGain();
       osc.type = 'sine';
       osc.frequency.setValueAtTime(320, now);
-      osc.frequency.linearRampToValueAtTime(270, now + 0.25);
-      gain.gain.setValueAtTime(0.14, now);
-      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.28);
+      osc.frequency.linearRampToValueAtTime(270, now + 0.22);
+      gain.gain.setValueAtTime(0.12, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.24);
       osc.connect(gain);
       gain.connect(audioCtx.destination);
       osc.start(now);
-      osc.stop(now + 0.28);
+      osc.stop(now + 0.24);
     }
 
     function playFanfareSound() {
@@ -1518,9 +1518,11 @@
       });
     }
 
-    // === 廣東話語音引擎 ===
+    // === 廣東話防吞字語音引擎（專為 iPad Safari 優化） ===
     let cantoneseVoice = null;
     let praiseToggle = 0;
+    let speechSeqTimers = [];
+    let currentUtteranceRef = null; // 防止 iOS Safari 提前回收 utterance 導致語音中斷
 
     function loadCantoneseVoice() {
       if (!('speechSynthesis' in window)) return;
@@ -1536,17 +1538,53 @@
       window.speechSynthesis.onvoiceschanged = loadCantoneseVoice;
     }
 
-    function speakCantonese(text, pitch = 1.15) {
+    function clearSpeechQueue() {
+      speechSeqTimers.forEach(t => clearTimeout(t));
+      speechSeqTimers = [];
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+      }
+    }
+
+    // 單句清晰朗讀（避開 iOS cancel() 後立即 speak() 吞字問題）
+    function speakSingleUtterance(text, pitch = 1.12, rate = 0.86) {
       if (!('speechSynthesis' in window) || !text) return;
-      window.speechSynthesis.cancel();
-      const utter = new SpeechSynthesisUtterance(text);
+      if (window.speechSynthesis.paused) {
+        window.speechSynthesis.resume();
+      }
+      const utter = new SpeechSynthesisUtterance(String(text));
       utter.lang = 'zh-HK';
       if (cantoneseVoice) {
         utter.voice = cantoneseVoice;
       }
-      utter.rate = 0.88;
+      utter.rate = rate;
       utter.pitch = pitch;
+      currentUtteranceRef = utter;
+      utter.onend = () => {
+        if (currentUtteranceRef === utter) currentUtteranceRef = null;
+      };
       window.speechSynthesis.speak(utter);
+    }
+
+    function speakCantonese(text, pitch = 1.12) {
+      clearSpeechQueue();
+      const t = setTimeout(() => {
+        speakSingleUtterance(text, pitch, 0.86);
+      }, 60);
+      speechSeqTimers.push(t);
+    }
+
+    // 分段語音佇列：確保「讚賞語」與「名詞」分開獨立發聲，iPad 絕不吞掉名詞
+    function speakSequence(segments) {
+      clearSpeechQueue();
+      let delay = 60;
+      segments.forEach(seg => {
+        const t = setTimeout(() => {
+          speakSingleUtterance(seg.text, seg.pitch || 1.14, seg.rate || 0.85);
+        }, delay);
+        speechSeqTimers.push(t);
+        delay += seg.pauseAfter || 950;
+      });
     }
 
     // === 頂部狀態列更新 ===
@@ -1685,7 +1723,7 @@
       });
     }
 
-    // === 處理「認識圖片」階段點擊：直接說出該圖片名詞，不加讚美語 ===
+    // === 處理「認識圖片」階段點擊：直接讀出該圖片名詞，不加讚美語 ===
     function handleLearnCardTap(cardEl, item) {
       if (runtime.isLocked || runtime.isPaused) return;
       runtime.isLocked = true;
@@ -1699,7 +1737,7 @@
 
       // 畫面與語音都直接呈現純粹的名詞本身
       promptBanner.textContent = item.name;
-      speakCantonese(item.name, 1.12);
+      speakCantonese(item.name, 1.15);
 
       runtime.roundCompleted += 1;
       s.streakAtLevel += 1;
@@ -1714,14 +1752,15 @@
       updateHeaderUI();
       updateStatsUI();
 
+      // 留足 2.1 秒確保名詞完整播完才進入下一張
       if (s.roundLimit > 0 && runtime.roundCompleted >= s.roundLimit) {
-        setTimeout(showRoundBreak, 1350);
+        setTimeout(showRoundBreak, 2100);
       } else {
-        setTimeout(generateQuestion, 1500);
+        setTimeout(generateQuestion, 2100);
       }
     }
 
-    // === 處理「選辦測驗」階段點擊卡片：無論揀啱或揀錯，都清楚讀出所按圖片的名詞 ===
+    // === 處理「選辦測驗」階段點擊卡片：分段讀出讚賞 + 名詞，確保 iPad 完整讀出 ===
     function handleChoiceClick(cardEl, chosenItem) {
       if (runtime.isLocked || runtime.isPaused) return;
       if (cardEl.classList.contains('wrong-dimmed')) return;
@@ -1730,7 +1769,7 @@
       const s = profile.settings;
 
       if (chosenItem.id === runtime.targetItem.id) {
-        // 揀啱咗：讚賞後清楚讀出該圖片名詞兩次強化記憶
+        // 揀啱咗：先讚賞，獨立停頓後清晰大聲讀出該圖片名詞
         runtime.isLocked = true;
         cardEl.classList.remove('hint-pulse');
         cardEl.classList.add('correct-hit');
@@ -1757,8 +1796,12 @@
         const praiseWord = praises[praiseToggle % praises.length];
         praiseToggle += 1;
 
-        promptBanner.textContent = `${praiseWord}呢個係「${chosenItem.name}」呀！`;
-        speakCantonese(`${praiseWord}${chosenItem.name}！呢個係${chosenItem.name}呀！`, 1.18);
+        promptBanner.textContent = `${praiseWord} ${chosenItem.name}`;
+        // 使用分段佇列：先講讚賞語，再獨立清晰讀出圖片名詞
+        speakSequence([
+          { text: praiseWord, pitch: 1.18, rate: 0.92, pauseAfter: 900 },
+          { text: chosenItem.name, pitch: 1.15, rate: 0.82, pauseAfter: 1200 }
+        ]);
 
         if (s.stageMode === 'auto' && s.streakAtLevel >= 3 && s.currentChoices < 3) {
           s.currentChoices += 1;
@@ -1769,13 +1812,14 @@
         updateHeaderUI();
         updateStatsUI();
 
+        // 留足 2.7 秒讓讚賞與名詞都完整播完才轉下一題
         if (s.roundLimit > 0 && runtime.roundCompleted >= s.roundLimit) {
-          setTimeout(showRoundBreak, 1650);
+          setTimeout(showRoundBreak, 2600);
         } else {
-          setTimeout(generateQuestion, 1950);
+          setTimeout(generateQuestion, 2700);
         }
       } else {
-        // 揀錯咗：先讀出學生剛才撳嗰張圖片嘅名詞，再提醒要搵邊個
+        // 揀錯咗：分段先讀出所按圖片名詞，再提醒目標名詞
         runtime.isFirstTryThisQuestion = false;
         runtime.wrongAttemptsThisQuestion += 1;
         s.streakAtLevel = 0;
@@ -1783,8 +1827,11 @@
 
         cardEl.classList.add('wrong-dimmed');
         playGentleNudgeSound();
-        promptBanner.textContent = `呢個係「${chosenItem.name}」呀！邊個係「${runtime.targetItem.name}」呀？`;
-        speakCantonese(`呢個係${chosenItem.name}呀！再試下啦，邊個係${runtime.targetItem.name}呀？`, 1.08);
+        promptBanner.textContent = `呢個係「${chosenItem.name}」｜ 邊個係「${runtime.targetItem.name}」？`;
+        speakSequence([
+          { text: `呢個係${chosenItem.name}`, pitch: 1.08, rate: 0.85, pauseAfter: 1350 },
+          { text: `邊個係${runtime.targetItem.name}呀？`, pitch: 1.12, rate: 0.86, pauseAfter: 1200 }
+        ]);
 
         if (s.autoHint) {
           const correctCard = document.querySelector(`.choice-card[data-id="${runtime.targetItem.id}"]`);
@@ -1826,7 +1873,8 @@
       if (runtime.targetItem && !runtime.isPaused) {
         const s = getActiveProfile().settings;
         if (s.currentChoices === 0) {
-          speakCantonese(runtime.targetItem.name, 1.12);
+          promptBanner.textContent = runtime.targetItem.name;
+          speakCantonese(runtime.targetItem.name, 1.15);
         } else {
           speakCantonese(`邊個係${runtime.targetItem.name}呀？`, 1.12);
         }
@@ -2240,7 +2288,7 @@
 
     function openTeacherPanel() {
       runtime.isPaused = true;
-      if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+      clearSpeechQueue();
       applyActiveProfileSettings();
       renderProfileTabsInPanel();
       renderThemeSlotsInPanel();
@@ -2338,6 +2386,11 @@
     document.getElementById('start-btn').addEventListener('click', () => {
       initAudio();
       loadCantoneseVoice();
+      // iOS Safari 首次手勢解鎖語音引擎
+      if ('speechSynthesis' in window) {
+        const unlockUtter = new SpeechSynthesisUtterance('');
+        window.speechSynthesis.speak(unlockUtter);
+      }
       const activeTheme = getActiveTheme();
       document.getElementById('start-overlay').style.display = 'none';
       if (activeTheme.items.length === 0) {

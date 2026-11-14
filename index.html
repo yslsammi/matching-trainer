@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <title>智選小達人 - 圖片選辦訓練遊戲</title>
+  <title>智選小達人 - 香港生活實物選辦訓練</title>
   <style>
     :root {
       --bg-color: #000000;
@@ -160,7 +160,7 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 20px;
+      padding: 18px;
       cursor: pointer;
       position: relative;
       transition: transform 0.22s ease, opacity 0.3s ease, border-color 0.25s ease, box-shadow 0.25s ease;
@@ -169,13 +169,13 @@
 
     /* 依選項數量自動調整大卡片尺寸 */
     .choices-1 .choice-card {
-      width: min(62vw, 440px);
-      height: min(58vh, 440px);
+      width: min(62vw, 450px);
+      height: min(58vh, 450px);
     }
 
     .choices-2 .choice-card {
-      width: min(35vw, 360px);
-      height: min(52vh, 390px);
+      width: min(35vw, 370px);
+      height: min(52vh, 400px);
     }
 
     .choices-3 .choice-card {
@@ -188,19 +188,20 @@
     }
 
     .choice-svg-box {
-      width: 72%;
-      height: 72%;
+      width: 76%;
+      height: 74%;
       display: flex;
       align-items: center;
       justify-content: center;
       overflow: hidden;
+      border-radius: 18px;
     }
 
     .choice-photo {
       width: 100%;
       height: 100%;
       object-fit: cover;
-      border-radius: 20px;
+      border-radius: 18px;
       border: 3px solid rgba(255, 255, 255, 0.25);
     }
 
@@ -217,8 +218,8 @@
     }
 
     .hide-labels .choice-svg-box {
-      width: 84%;
-      height: 84%;
+      width: 86%;
+      height: 86%;
     }
 
     /* 答對與錯誤提示狀態 */
@@ -628,16 +629,16 @@
 
   <!-- 主遊戲畫面 -->
   <div id="main-container">
-    <div id="prompt-banner">邊個係蘋果呀？</div>
+    <div id="prompt-banner">邊個係的士呀？</div>
     <div id="choices-grid" class="choices-1"></div>
   </div>
 
   <!-- 開始畫面 -->
   <div id="start-overlay">
-    <div style="font-size: 5rem;">🎯</div>
+    <div style="font-size: 5rem;">🚖</div>
     <h1 style="font-size: 2.6rem; color: #FFFF00; margin: 12px 0;">智選小達人</h1>
-    <p style="font-size: 1.2rem; color: #CCCCCC; max-width: 500px; line-height: 1.6;">
-      循序漸進圖片選辦訓練（一選一 → 二選一 → 三選一）<br/>
+    <p style="font-size: 1.2rem; color: #CCCCCC; max-width: 520px; line-height: 1.6;">
+      香港生活實物與交通工具選辦訓練（一選一 → 二選一 → 三選一）<br/>
       <span style="font-size: 0.95rem; color: #888;">（進入後按一下左上角齒輪即可開啟教師設定及上傳自訂照片）</span>
     </p>
     <button class="big-start-btn" id="start-btn">開始訓練</button>
@@ -692,13 +693,12 @@
       <div class="setting-group">
         <label>2. 訓練題庫來源與主題</label>
         <div class="btn-group" data-setting="category">
-          <button class="opt-btn active" data-val="all">全部詞彙（內置 12 款 ＋ 自訂照片）</button>
+          <button class="opt-btn active" data-val="all">全部香港實物（9 款 ＋ 自訂照片）</button>
+          <button class="opt-btn" data-val="vehicle">香港交通工具（的士、地鐵、巴士、復康巴士）</button>
+          <button class="opt-btn" data-val="daily">日常用品（牙刷、書包、輪椅、毛巾、波鞋）</button>
           <button class="opt-btn" data-val="custom">⭐ 只用老師自訂照片（家人 / 同學 / 實物）</button>
-          <button class="opt-btn" data-val="food">食物與水果（蘋果、香蕉、橙、杯杯）</button>
-          <button class="opt-btn" data-val="vehicle">交通工具（車車、巴士、飛機）</button>
-          <button class="opt-btn" data-val="nature">動物與自然（貓咪、狗狗、太陽、星星、花朵）</button>
         </div>
-        <div id="custom-warning-msg">⚠️ 提示：自訂照片數量不足目前選辦選項數（建議至少上傳 3 張），系統將暫時自動補入內置圖片配對。</div>
+        <div id="custom-warning-msg">⚠️ 提示：自訂照片數量不足目前選辦選項數（建議至少上傳 3 張），系統將暫時自動補入內置實物配對。</div>
       </div>
 
       <!-- 3. 卡片是否顯示文字名稱 -->
@@ -765,134 +765,284 @@
   </div>
 
   <script>
-    // === 12 款內置高對比生活化圖片詞庫 ===
+    // === 9 款香港生活實物與交通工具寫實高對比圖庫 ===
     const BUILTIN_ITEMS = [
       {
-        id: 'apple', name: '蘋果', category: 'food',
-        svg: `<svg viewBox="0 0 120 120" width="100%" height="100%">
-          <path d="M60 36 C44 26, 20 34, 20 62 C20 90, 40 110, 54 110 C58 110, 60 107, 60 107 C60 107, 62 110, 66 110 C80 110, 100 90, 100 62 C100 34, 76 26, 60 36 Z" fill="#FF2A2A"/>
-          <path d="M60 34 L60 14" stroke="#8B4513" stroke-width="8" stroke-linecap="round"/>
-          <path d="M62 22 C72 8, 92 10, 94 22 C82 30, 68 28, 62 22 Z" fill="#00E640"/>
-          <path d="M35 54 C33 66, 37 78, 43 86" fill="none" stroke="#FFFFFF" stroke-width="6" stroke-linecap="round"/>
+        id: 'hk_taxi', name: '的士', category: 'vehicle',
+        svg: `<svg viewBox="0 0 240 180" width="100%" height="100%">
+          <defs>
+            <linearGradient id="skyGrad1" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#D9ECFF"/>
+              <stop offset="100%" stop-color="#F5F7FA"/>
+            </linearGradient>
+            <linearGradient id="taxiRed" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#E61919"/>
+              <stop offset="100%" stop-color="#A80D0D"/>
+            </linearGradient>
+          </defs>
+          <rect width="240" height="180" rx="16" fill="url(#skyGrad1)"/>
+          <!-- 路面 -->
+          <rect x="0" y="132" width="240" height="48" fill="#3A3D42"/>
+          <line x1="16" y1="156" x2="64" y2="156" stroke="#FFD600" stroke-width="5" stroke-linecap="round"/>
+          <line x1="96" y1="156" x2="144" y2="156" stroke="#FFD600" stroke-width="5" stroke-linecap="round"/>
+          <line x1="176" y1="156" x2="224" y2="156" stroke="#FFD600" stroke-width="5" stroke-linecap="round"/>
+          <!-- 車底陰影 -->
+          <ellipse cx="120" cy="142" rx="94" ry="8" fill="rgba(0,0,0,0.45)"/>
+          <!-- 頂部 TAXI 燈箱 -->
+          <rect x="102" y="34" width="38" height="14" rx="4" fill="#FFFDF0" stroke="#222" stroke-width="2"/>
+          <text x="121" y="44" font-size="9.5" font-weight="900" fill="#D91414" text-anchor="middle" font-family="Arial">TAXI</text>
+          <!-- 銀白色車頂 -->
+          <path d="M58 76 L76 48 C80 44, 86 43, 94 43 L152 43 C160 43, 166 45, 170 50 L186 76 Z" fill="#F2F4F7" stroke="#222" stroke-width="2.5"/>
+          <!-- 車窗 -->
+          <polygon points="82,50 116,50 116,74 66,74" fill="#2A3B4C"/>
+          <polygon points="122,50 158,50 174,74 122,74" fill="#2A3B4C"/>
+          <!-- 紅色車身 -->
+          <path d="M22 96 C22 84, 30 76, 44 76 L194 76 C208 76, 218 84, 218 98 L218 124 C218 129, 214 132, 208 132 L32 132 C26 132, 22 129, 22 124 Z" fill="url(#taxiRed)" stroke="#1C1C1C" stroke-width="2.5"/>
+          <!-- 車門分隔線與手把 -->
+          <line x1="119" y1="76" x2="119" y2="130" stroke="#6E0707" stroke-width="2"/>
+          <rect x="98" y="88" width="12" height="4" rx="2" fill="#E0E0E0"/>
+          <rect x="148" y="88" width="12" height="4" rx="2" fill="#E0E0E0"/>
+          <!-- 頭燈與尾燈 -->
+          <rect x="206" y="86" width="11" height="14" rx="3" fill="#FFF59D" stroke="#333" stroke-width="1.5"/>
+          <rect x="23" y="86" width="8" height="14" rx="2" fill="#FF8F00" stroke="#333" stroke-width="1.5"/>
+          <!-- 防撞欄 -->
+          <rect x="18" y="118" width="204" height="11" rx="5" fill="#222226"/>
+          <!-- 車輪 -->
+          <circle cx="66" cy="132" r="20" fill="#18181A" stroke="#000" stroke-width="2"/>
+          <circle cx="66" cy="132" r="10" fill="#D0D5DD"/>
+          <circle cx="66" cy="132" r="4" fill="#333"/>
+          <circle cx="176" cy="132" r="20" fill="#18181A" stroke="#000" stroke-width="2"/>
+          <circle cx="176" cy="132" r="10" fill="#D0D5DD"/>
+          <circle cx="176" cy="132" r="4" fill="#333"/>
         </svg>`
       },
       {
-        id: 'banana', name: '香蕉', category: 'food',
-        svg: `<svg viewBox="0 0 120 120" width="100%" height="100%">
-          <path d="M26 88 C52 98, 92 78, 98 26 C100 18, 90 16, 86 24 C76 58, 48 74, 22 76 C14 77, 16 85, 26 88 Z" fill="#FFE600" stroke="#CC9900" stroke-width="3"/>
-          <circle cx="93" cy="21" r="5" fill="#5C3A21"/>
-          <circle cx="20" cy="81" r="5" fill="#5C3A21"/>
+        id: 'hk_mtr', name: '地鐵', category: 'vehicle',
+        svg: `<svg viewBox="0 0 240 180" width="100%" height="100%">
+          <defs>
+            <linearGradient id="mtrBody" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#F2F4F8"/>
+              <stop offset="60%" stop-color="#CFD5DF"/>
+              <stop offset="100%" stop-color="#9AA3B2"/>
+            </linearGradient>
+          </defs>
+          <rect width="240" height="180" rx="16" fill="#E3EAF2"/>
+          <!-- 路軌基座 -->
+          <rect x="0" y="138" width="240" height="42" fill="#4A4E54"/>
+          <line x1="0" y1="142" x2="240" y2="142" stroke="#8C939E" stroke-width="4"/>
+          <!-- 高架橋支柱陰影 -->
+          <ellipse cx="120" cy="140" rx="102" ry="6" fill="rgba(0,0,0,0.4)"/>
+          <!-- 港鐵列車主體（流線車頭 + 車廂） -->
+          <path d="M22 134 L22 68 C22 50, 36 38, 56 38 L216 38 C222 38, 226 42, 226 48 L226 128 C226 132, 222 134, 218 134 Z" fill="url(#mtrBody)" stroke="#222" stroke-width="2.5"/>
+          <!-- 經典港鐵紅色車頂與腰線 -->
+          <path d="M36 46 L224 46 L224 54 L28 54 Z" fill="#C8102E"/>
+          <rect x="22" y="114" width="204" height="10" fill="#C8102E"/>
+          <!-- 車頭擋風玻璃與目的地顯示屏 -->
+          <path d="M26 94 L30 62 C32 56, 38 54, 46 54 L62 54 L62 94 Z" fill="#1C2833"/>
+          <rect x="33" y="57" width="24" height="8" rx="2" fill="#FF9800"/>
+          <!-- 紅色對開列車門 1 -->
+          <rect x="76" y="56" width="32" height="76" rx="3" fill="#C8102E" stroke="#222" stroke-width="2"/>
+          <line x1="92" y1="56" x2="92" y2="132" stroke="#6E0818" stroke-width="2"/>
+          <rect x="80" y="62" width="9" height="28" rx="2" fill="#2A3B4C"/>
+          <rect x="95" y="62" width="9" height="28" rx="2" fill="#2A3B4C"/>
+          <!-- 乘客車窗 -->
+          <rect x="116" y="62" width="38" height="28" rx="4" fill="#2A3B4C" stroke="#444" stroke-width="2"/>
+          <!-- 紅色對開列車門 2 -->
+          <rect x="162" y="56" width="32" height="76" rx="3" fill="#C8102E" stroke="#222" stroke-width="2"/>
+          <line x1="178" y1="56" x2="178" y2="132" stroke="#6E0818" stroke-width="2"/>
+          <rect x="166" y="62" width="9" height="28" rx="2" fill="#2A3B4C"/>
+          <rect x="181" y="62" width="9" height="28" rx="2" fill="#2A3B4C"/>
+          <!-- 車尾窗 -->
+          <rect x="202" y="62" width="18" height="28" rx="3" fill="#2A3B4C" stroke="#444" stroke-width="2"/>
+          <!-- 車頭燈 -->
+          <rect x="23" y="102" width="10" height="8" rx="2" fill="#FFF59D"/>
+          <!-- 車輪轉向架 -->
+          <circle cx="56" cy="136" r="7" fill="#1A1A1A"/>
+          <circle cx="80" cy="136" r="7" fill="#1A1A1A"/>
+          <circle cx="168" cy="136" r="7" fill="#1A1A1A"/>
+          <circle cx="192" cy="136" r="7" fill="#1A1A1A"/>
         </svg>`
       },
       {
-        id: 'orange', name: '橙', category: 'food',
-        svg: `<svg viewBox="0 0 120 120" width="100%" height="100%">
-          <circle cx="60" cy="66" r="42" fill="#FF8800"/>
-          <path d="M60 24 L60 12" stroke="#228B22" stroke-width="7" stroke-linecap="round"/>
-          <path d="M60 20 C72 10, 88 14, 86 24 C76 28, 66 26, 60 20 Z" fill="#00E640"/>
-          <circle cx="44" cy="52" r="3.5" fill="#FFCC66"/>
-          <circle cx="38" cy="66" r="3.5" fill="#FFCC66"/>
-          <circle cx="48" cy="76" r="3.5" fill="#FFCC66"/>
+        id: 'hk_bus', name: '巴士', category: 'vehicle',
+        svg: `<svg viewBox="0 0 240 180" width="100%" height="100%">
+          <rect width="240" height="180" rx="16" fill="#DCEEFF"/>
+          <!-- 路面 -->
+          <rect x="0" y="144" width="240" height="36" fill="#3B3E42"/>
+          <ellipse cx="120" cy="148" rx="96" ry="7" fill="rgba(0,0,0,0.45)"/>
+          <!-- 香港經典紅金雙層巴士車身 -->
+          <rect x="26" y="18" width="188" height="126" rx="14" fill="#C8102E" stroke="#1E1E1E" stroke-width="2.5"/>
+          <!-- 金色車頂與腰帶（九巴城市脈搏風格） -->
+          <path d="M26 30 C26 22, 32 18, 40 18 L200 18 C208 18, 214 22, 214 30 L214 34 L26 34 Z" fill="#D4AF37"/>
+          <rect x="26" y="76" width="188" height="9" fill="#D4AF37"/>
+          <!-- 上層路線牌與車窗 -->
+          <rect x="174" y="38" width="34" height="30" rx="4" fill="#1A1A1A"/>
+          <text x="191" y="58" font-size="14" font-weight="900" fill="#FFB300" text-anchor="middle" font-family="Arial">68X</text>
+          <rect x="34" y="38" width="30" height="30" rx="4" fill="#243447"/>
+          <rect x="69" y="38" width="30" height="30" rx="4" fill="#243447"/>
+          <rect x="104" y="38" width="30" height="30" rx="4" fill="#243447"/>
+          <rect x="139" y="38" width="30" height="30" rx="4" fill="#243447"/>
+          <!-- 下層車窗與上下車門 -->
+          <rect x="34" y="90" width="32" height="28" rx="4" fill="#243447"/>
+          <rect x="72" y="90" width="32" height="28" rx="4" fill="#243447"/>
+          <!-- 中門 -->
+          <rect x="112" y="90" width="24" height="52" rx="3" fill="#243447" stroke="#D4AF37" stroke-width="2"/>
+          <line x1="124" y1="90" x2="124" y2="142" stroke="#D4AF37" stroke-width="2"/>
+          <!-- 前門與駕駛室 -->
+          <rect x="142" y="90" width="32" height="28" rx="4" fill="#243447"/>
+          <rect x="182" y="90" width="24" height="52" rx="3" fill="#243447" stroke="#D4AF37" stroke-width="2"/>
+          <!-- 車頭大燈 -->
+          <rect x="206" y="124" width="7" height="10" rx="2" fill="#FFF59D"/>
+          <!-- 雙層巴士大車輪 -->
+          <circle cx="68" cy="144" r="18" fill="#18181A" stroke="#000" stroke-width="2"/>
+          <circle cx="68" cy="144" r="9" fill="#C0C6D0"/>
+          <circle cx="170" cy="144" r="18" fill="#18181A" stroke="#000" stroke-width="2"/>
+          <circle cx="170" cy="144" r="9" fill="#C0C6D0"/>
         </svg>`
       },
       {
-        id: 'cup', name: '杯杯', category: 'food',
-        svg: `<svg viewBox="0 0 120 120" width="100%" height="100%">
-          <path d="M84 44 L98 44 C106 44, 110 52, 110 62 C110 72, 106 80, 98 80 L84 80" fill="none" stroke="#00D4FF" stroke-width="11" stroke-linecap="round"/>
-          <path d="M26 34 L86 34 L80 96 C79 102, 74 106, 68 106 L44 106 C38 106, 33 102, 32 96 Z" fill="#00D4FF"/>
-          <rect x="32" y="54" width="48" height="14" fill="#FFFFFF" opacity="0.85"/>
+        id: 'hk_rehabus', name: '復康巴士', category: 'vehicle',
+        svg: `<svg viewBox="0 0 240 180" width="100%" height="100%">
+          <rect width="240" height="180" rx="16" fill="#E6F4EA"/>
+          <!-- 路面 -->
+          <rect x="0" y="140" width="240" height="40" fill="#3B3E42"/>
+          <ellipse cx="120" cy="145" rx="95" ry="7" fill="rgba(0,0,0,0.4)"/>
+          <!-- 香港復康巴士（純白高頂小巴車身 ＋ 翠綠色腰帶與輪椅標誌） -->
+          <path d="M26 136 L26 48 C26 36, 34 28, 46 28 L174 28 C184 28, 192 34, 196 44 L214 82 C217 88, 218 94, 218 102 L218 130 C218 134, 214 136, 208 136 Z" fill="#FFFFFF" stroke="#1E1E1E" stroke-width="2.5"/>
+          <!-- 復康巴士標誌性綠色色帶 -->
+          <rect x="26" y="96" width="192" height="18" fill="#009E49"/>
+          <rect x="26" y="114" width="192" height="6" fill="#FFD600"/>
+          <!-- 車窗 -->
+          <rect x="38" y="42" width="42" height="40" rx="5" fill="#263849"/>
+          <rect x="88" y="42" width="46" height="40" rx="5" fill="#263849"/>
+          <polygon points="142,42 184,42 198,82 142,82" fill="#263849"/>
+          <!-- 國際無障礙輪椅標誌（藍底白圖，清晰易辨） -->
+          <rect x="44" y="88" width="34" height="34" rx="6" fill="#0055CC" stroke="#FFFFFF" stroke-width="2"/>
+          <circle cx="62" cy="96" r="3.5" fill="#FFFFFF"/>
+          <path d="M61 101 L61 110 L70 110 L72 116" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M65 113 A7 7 0 1 1 56 105" fill="none" stroke="#FFFFFF" stroke-width="2.8" stroke-linecap="round"/>
+          <!-- 車頭燈 -->
+          <rect x="208" y="106" width="9" height="12" rx="2" fill="#FFF59D" stroke="#333" stroke-width="1.5"/>
+          <!-- 車輪 -->
+          <circle cx="66" cy="138" r="19" fill="#18181A" stroke="#000" stroke-width="2"/>
+          <circle cx="66" cy="138" r="9" fill="#D0D5DD"/>
+          <circle cx="176" cy="138" r="19" fill="#18181A" stroke="#000" stroke-width="2"/>
+          <circle cx="176" cy="138" r="9" fill="#D0D5DD"/>
         </svg>`
       },
       {
-        id: 'car', name: '車車', category: 'vehicle',
-        svg: `<svg viewBox="0 0 120 120" width="100%" height="100%">
-          <path d="M22 58 L32 32 C35 26, 40 24, 46 24 L74 24 C80 24, 85 26, 88 32 L98 58 L108 62 C112 64, 114 68, 114 74 L114 86 C114 90, 110 94, 106 94 L14 94 C10 94, 6 90, 6 86 L6 74 C6 68, 8 64, 12 62 Z" fill="#FF2A2A"/>
-          <polygon points="40,32 56,32 56,52 32,52" fill="#FFFFFF"/>
-          <polygon points="64,32 80,32 88,52 64,52" fill="#FFFFFF"/>
-          <circle cx="32" cy="94" r="15" fill="#444444" stroke="#FFFFFF" stroke-width="3"/>
-          <circle cx="32" cy="94" r="6" fill="#FFFF00"/>
-          <circle cx="88" cy="94" r="15" fill="#444444" stroke="#FFFFFF" stroke-width="3"/>
-          <circle cx="88" cy="94" r="6" fill="#FFFF00"/>
-        </svg>`
-      },
-      {
-        id: 'bus', name: '巴士', category: 'vehicle',
-        svg: `<svg viewBox="0 0 120 120" width="100%" height="100%">
-          <rect x="12" y="24" width="96" height="68" rx="14" fill="#FFD600"/>
-          <rect x="20" y="34" width="22" height="24" rx="4" fill="#002868"/>
-          <rect x="49" y="34" width="22" height="24" rx="4" fill="#002868"/>
-          <rect x="78" y="34" width="22" height="24" rx="4" fill="#002868"/>
-          <rect x="12" y="68" width="96" height="10" fill="#FF2A2A"/>
-          <circle cx="32" cy="94" r="14" fill="#333333" stroke="#FFFFFF" stroke-width="3"/>
-          <circle cx="88" cy="94" r="14" fill="#333333" stroke="#FFFFFF" stroke-width="3"/>
-        </svg>`
-      },
-      {
-        id: 'plane', name: '飛機', category: 'vehicle',
-        svg: `<svg viewBox="0 0 120 120" width="100%" height="100%">
-          <path d="M108 58 C108 52, 96 48, 82 48 L62 48 L42 16 L30 16 L42 48 L22 48 L14 34 L6 34 L12 58 L6 82 L14 82 L22 68 L42 68 L30 100 L42 100 L62 68 L82 68 C96 68, 108 64, 108 58 Z" fill="#00D4FF"/>
-          <circle cx="86" cy="56" r="5" fill="#FFFFFF"/>
-          <circle cx="72" cy="56" r="4" fill="#FFFFFF"/>
-        </svg>`
-      },
-      {
-        id: 'cat', name: '貓咪', category: 'nature',
-        svg: `<svg viewBox="0 0 120 120" width="100%" height="100%">
-          <polygon points="24,52 24,16 50,36" fill="#FF9900"/>
-          <polygon points="96,52 96,16 70,36" fill="#FF9900"/>
-          <circle cx="60" cy="66" r="40" fill="#FF9900"/>
-          <circle cx="45" cy="58" r="6" fill="#000000"/>
-          <circle cx="75" cy="58" r="6" fill="#000000"/>
-          <polygon points="54,70 66,70 60,78" fill="#FF2A85"/>
-          <path d="M48 84 Q60 94 72 84" fill="none" stroke="#000000" stroke-width="5" stroke-linecap="round"/>
-          <path d="M12 64 L32 66 M12 76 L32 74 M108 64 L88 66 M108 76 L88 74" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round"/>
-        </svg>`
-      },
-      {
-        id: 'dog', name: '狗狗', category: 'nature',
-        svg: `<svg viewBox="0 0 120 120" width="100%" height="100%">
-          <ellipse cx="22" cy="62" rx="14" ry="28" transform="rotate(15 22 62)" fill="#7A3E10"/>
-          <ellipse cx="98" cy="62" rx="14" ry="28" transform="rotate(-15 98 62)" fill="#7A3E10"/>
-          <circle cx="60" cy="64" r="38" fill="#C67D3B"/>
-          <circle cx="46" cy="54" r="6" fill="#000000"/>
-          <circle cx="74" cy="54" r="6" fill="#000000"/>
-          <ellipse cx="60" cy="70" rx="9" ry="7" fill="#000000"/>
-          <path d="M52 84 Q60 98 68 84" fill="#FF4D6D"/>
-        </svg>`
-      },
-      {
-        id: 'sun', name: '太陽', category: 'nature',
-        svg: `<svg viewBox="0 0 120 120" width="100%" height="100%">
-          <circle cx="60" cy="60" r="32" fill="#FFFF00"/>
-          <g stroke="#FF9900" stroke-width="9" stroke-linecap="round">
-            <line x1="60" y1="8" x2="60" y2="20"/>
-            <line x1="60" y1="100" x2="60" y2="112"/>
-            <line x1="8" y1="60" x2="20" y2="60"/>
-            <line x1="100" y1="60" x2="112" y2="60"/>
-            <line x1="23" y1="23" x2="31" y2="31"/>
-            <line x1="89" y1="89" x2="97" y2="97"/>
-            <line x1="97" y1="23" x2="89" y2="31"/>
-            <line x1="31" y1="89" x2="23" y2="97"/>
+        id: 'toothbrush', name: '牙刷', category: 'daily',
+        svg: `<svg viewBox="0 0 240 180" width="100%" height="100%">
+          <rect width="240" height="180" rx="16" fill="#F0F6FC"/>
+          <!-- 柔和陰影 -->
+          <ellipse cx="122" cy="148" rx="84" ry="8" fill="rgba(0,0,0,0.16)"/>
+          <!-- 傾斜寫實牙刷 -->
+          <g transform="rotate(-24 120 92)">
+            <!-- 白色刷毛（分束排列） -->
+            <rect x="148" y="54" width="52" height="24" rx="4" fill="#FFFFFF" stroke="#B0BEC5" stroke-width="2"/>
+            <line x1="158" y1="54" x2="158" y2="78" stroke="#CFD8DC" stroke-width="2.5"/>
+            <line x1="168" y1="54" x2="168" y2="78" stroke="#CFD8DC" stroke-width="2.5"/>
+            <line x1="178" y1="54" x2="178" y2="78" stroke="#CFD8DC" stroke-width="2.5"/>
+            <line x1="188" y1="54" x2="188" y2="78" stroke="#CFD8DC" stroke-width="2.5"/>
+            <!-- 擠在刷毛上的薄荷綠牙膏 -->
+            <path d="M150 54 C156 42, 188 42, 198 52 C192 56, 156 56, 150 54 Z" fill="#00C896" stroke="#008F6B" stroke-width="1.5"/>
+            <!-- 刷頭底座與藍色防滑手柄 -->
+            <rect x="26" y="78" width="178" height="16" rx="8" fill="#0077E6" stroke="#004C99" stroke-width="2.5"/>
+            <!-- 白色防滑握位細節 -->
+            <rect x="46" y="81" width="56" height="10" rx="5" fill="#E3F2FD"/>
+            <line x1="56" y1="81" x2="56" y2="91" stroke="#0077E6" stroke-width="2.5"/>
+            <line x1="68" y1="81" x2="68" y2="91" stroke="#0077E6" stroke-width="2.5"/>
+            <line x1="80" y1="81" x2="80" y2="91" stroke="#0077E6" stroke-width="2.5"/>
+            <line x1="92" y1="81" x2="92" y2="91" stroke="#0077E6" stroke-width="2.5"/>
           </g>
         </svg>`
       },
       {
-        id: 'star', name: '星星', category: 'nature',
-        svg: `<svg viewBox="0 0 120 120" width="100%" height="100%">
-          <polygon points="60,10 75,42 110,46 84,70 92,106 60,88 28,106 36,70 10,46 45,42" fill="#FFFF00" stroke="#FFAA00" stroke-width="4" stroke-linejoin="round"/>
+        id: 'schoolbag', name: '書包', category: 'daily',
+        svg: `<svg viewBox="0 0 240 180" width="100%" height="100%">
+          <rect width="240" height="180" rx="16" fill="#FFF8E7"/>
+          <ellipse cx="120" cy="158" rx="64" ry="8" fill="rgba(0,0,0,0.2)"/>
+          <!-- 頂部手提挽帶 -->
+          <path d="M98 30 C98 14, 142 14, 142 30" fill="none" stroke="#1E3A8A" stroke-width="9" stroke-linecap="round"/>
+          <!-- 兩側水壺網袋 -->
+          <rect x="52" y="88" width="22" height="52" rx="8" fill="#1E3A8A" stroke="#111" stroke-width="2"/>
+          <rect x="166" y="88" width="22" height="52" rx="8" fill="#1E3A8A" stroke="#111" stroke-width="2"/>
+          <!-- 書包主袋（鮮明亮黃色，低視能極易辨識） -->
+          <path d="M66 64 C66 40, 86 28, 120 28 C154 28, 174 40, 174 64 L178 142 C178 150, 172 154, 162 154 L78 154 C68 154, 62 150, 62 142 Z" fill="#FFB800" stroke="#222" stroke-width="3"/>
+          <!-- 主袋拉鍊弧線 -->
+          <path d="M74 68 C74 48, 92 40, 120 40 C148 40, 166 48, 166 68" fill="none" stroke="#1E3A8A" stroke-width="4" stroke-dasharray="6,4"/>
+          <!-- 前置拉鍊小袋 -->
+          <rect x="80" y="92" width="80" height="52" rx="12" fill="#1E3A8A" stroke="#111" stroke-width="2.5"/>
+          <line x1="88" y1="108" x2="152" y2="108" stroke="#FFFFFF" stroke-width="3.5" stroke-linecap="round"/>
+          <rect x="116" y="108" width="8" height="12" rx="2" fill="#FFD600"/>
         </svg>`
       },
       {
-        id: 'flower', name: '花朵', category: 'nature',
-        svg: `<svg viewBox="0 0 120 120" width="100%" height="100%">
-          <g fill="#FF3399">
-            <circle cx="60" cy="28" r="20"/>
-            <circle cx="90" cy="50" r="20"/>
-            <circle cx="78" cy="86" r="20"/>
-            <circle cx="42" cy="86" r="20"/>
-            <circle cx="30" cy="50" r="20"/>
-          </g>
-          <circle cx="60" cy="60" r="22" fill="#FFFF00"/>
+        id: 'wheelchair', name: '輪椅', category: 'daily',
+        svg: `<svg viewBox="0 0 240 180" width="100%" height="100%">
+          <rect width="240" height="180" rx="16" fill="#EEF2F6"/>
+          <ellipse cx="122" cy="158" rx="74" ry="7" fill="rgba(0,0,0,0.22)"/>
+          <!-- 推手把與高背椅背 -->
+          <path d="M62 28 L76 28 L76 96 L148 96 L166 138 L184 138" fill="none" stroke="#2C3E50" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+          <!-- 黑色透氣椅背墊 -->
+          <rect x="68" y="34" width="14" height="58" rx="4" fill="#1A1A1D"/>
+          <!-- 黑色厚坐墊 -->
+          <rect x="76" y="88" width="74" height="13" rx="5" fill="#1A1A1D"/>
+          <!-- 扶手 -->
+          <path d="M76 66 L138 66 L138 88" fill="none" stroke="#475569" stroke-width="6" stroke-linecap="round"/>
+          <!-- 腳踏板 -->
+          <rect x="162" y="135" width="26" height="7" rx="3" fill="#1A1A1D"/>
+          <!-- 前方萬向小輪 -->
+          <circle cx="154" cy="144" r="13" fill="#1E293B" stroke="#000" stroke-width="2"/>
+          <circle cx="154" cy="144" r="5" fill="#CBD5E1"/>
+          <!-- 後方大驅動輪與銀色手推圈 -->
+          <circle cx="92" cy="122" r="35" fill="none" stroke="#18181B" stroke-width="8"/>
+          <circle cx="92" cy="122" r="26" fill="none" stroke="#94A3B8" stroke-width="3.5"/>
+          <!-- 輻條 -->
+          <line x1="92" y1="88" x2="92" y2="156" stroke="#64748B" stroke-width="2.5"/>
+          <line x1="58" y1="122" x2="126" y2="122" stroke="#64748B" stroke-width="2.5"/>
+          <line x1="68" y1="98" x2="116" y2="146" stroke="#64748B" stroke-width="2.5"/>
+          <line x1="116" y1="98" x2="68" y2="146" stroke="#64748B" stroke-width="2.5"/>
+          <circle cx="92" cy="122" r="7" fill="#1E293B"/>
+        </svg>`
+      },
+      {
+        id: 'towel', name: '毛巾', category: 'daily',
+        svg: `<svg viewBox="0 0 240 180" width="100%" height="100%">
+          <rect width="240" height="180" rx="16" fill="#F5F7FA"/>
+          <!-- 不鏽鋼毛巾掛架 -->
+          <rect x="28" y="32" width="184" height="10" rx="5" fill="#78909C" stroke="#37474F" stroke-width="2"/>
+          <circle cx="34" cy="37" r="8" fill="#546E7A"/>
+          <circle cx="206" cy="37" r="8" fill="#546E7A"/>
+          <!-- 掛在架上的柔軟藍色毛巾（前後兩層立體折疊） -->
+          <rect x="64" y="34" width="112" height="122" rx="6" fill="#4FC3F7" stroke="#0277BD" stroke-width="2.5"/>
+          <rect x="58" y="28" width="124" height="106" rx="8" fill="#81D4FA" stroke="#0277BD" stroke-width="2.5"/>
+          <!-- 毛巾織紋與底部白色條紋細節 -->
+          <rect x="59" y="110" width="122" height="8" fill="#FFFFFF"/>
+          <rect x="59" y="122" width="122" height="4" fill="#FFFFFF"/>
+          <!-- 毛巾底部流蘇邊 -->
+          <path d="M64 156 L64 164 M74 156 L74 164 M84 156 L84 164 M94 156 L94 164 M104 156 L104 164 M114 156 L114 164 M124 156 L124 164 M134 156 L134 164 M144 156 L144 164 M154 156 L154 164 M164 156 L164 164 M174 156 L174 164" stroke="#0277BD" stroke-width="3" stroke-linecap="round"/>
+        </svg>`
+      },
+      {
+        id: 'sneakers', name: '波鞋', category: 'daily',
+        svg: `<svg viewBox="0 0 240 180" width="100%" height="100%">
+          <rect width="240" height="180" rx="16" fill="#FFF3F3"/>
+          <ellipse cx="122" cy="148" rx="92" ry="8" fill="rgba(0,0,0,0.22)"/>
+          <!-- 運動波鞋鞋身（鮮紅色 ＋ 白色運動標誌與厚鞋底） -->
+          <path d="M34 122 L34 68 C34 62, 42 60, 48 64 C58 72, 74 72, 86 60 L102 48 C108 44, 114 48, 118 56 L144 88 C168 92, 206 98, 210 116 L210 124 L34 124 Z" fill="#E52521" stroke="#1E1E1E" stroke-width="2.5" stroke-linejoin="round"/>
+          <!-- 白色鞋頭保護片 -->
+          <path d="M174 122 C180 106, 198 104, 210 116 L210 124 Z" fill="#FFFFFF" stroke="#1E1E1E" stroke-width="2"/>
+          <!-- 白色側邊動感線條 -->
+          <path d="M58 104 C92 106, 124 96, 146 86 L154 96 C128 110, 92 118, 56 114 Z" fill="#FFFFFF"/>
+          <!-- 白色鞋帶細節 -->
+          <line x1="112" y1="62" x2="128" y2="56" stroke="#FFFFFF" stroke-width="5" stroke-linecap="round"/>
+          <line x1="122" y1="72" x2="138" y2="66" stroke="#FFFFFF" stroke-width="5" stroke-linecap="round"/>
+          <line x1="132" y1="82" x2="148" y2="76" stroke="#FFFFFF" stroke-width="5" stroke-linecap="round"/>
+          <!-- 白色厚避震中底 -->
+          <rect x="30" y="122" width="184" height="15" rx="6" fill="#FFFFFF" stroke="#1E1E1E" stroke-width="2.5"/>
+          <!-- 黑色防滑鞋底 -->
+          <rect x="30" y="136" width="184" height="7" rx="3" fill="#222226"/>
         </svg>`
       }
     ];
@@ -928,7 +1078,7 @@
       stageMode: 'auto',     // 'auto' | 1 | 2 | 3
       currentChoices: 1,     // 實際當前選項數 1, 2, 3
       streakAtLevel: 0,      // 自動進階用連續一次答對次數
-      category: 'all',       // 'all' | 'custom' | 'food' | 'vehicle' | 'nature'
+      category: 'all',       // 'all' | 'vehicle' | 'daily' | 'custom'
       showText: true,
       theme: 'dark',
       autoHint: true,
@@ -1071,7 +1221,7 @@
       }
     }
 
-    // === 產生新一題（支援自訂照片與內置圖庫） ===
+    // === 產生新一題（支援自訂照片與香港實物圖庫） ===
     function generateQuestion() {
       if (state.isPaused) return;
       state.isLocked = false;

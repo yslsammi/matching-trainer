@@ -136,7 +136,7 @@
       transform: scale(0.95);
     }
 
-    /* 主遊戲區 */
+    /* 主遊戲區（為底部「下一題」按鈕預留空間） */
     #main-container {
       width: 100vw;
       height: 100vh;
@@ -144,12 +144,12 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 80px 12px 20px 12px;
-      gap: 18px;
+      padding: 76px 12px 94px 12px;
+      gap: 14px;
     }
 
     #prompt-banner {
-      font-size: clamp(2rem, 4.3vw, 3.3rem);
+      font-size: clamp(1.9rem, 4.1vw, 3.1rem);
       font-weight: 900;
       text-align: center;
       color: var(--text-color);
@@ -164,7 +164,7 @@
       gap: clamp(18px, 3.5vw, 44px);
       width: 100%;
       flex: 1;
-      max-height: 74vh;
+      max-height: 68vh;
     }
 
     /* 二選一專用：超大卡片 + 左右極致分開 */
@@ -194,7 +194,7 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 16px;
+      padding: 14px;
       cursor: pointer;
       position: relative;
       transition: transform 0.22s ease, opacity 0.3s ease, border-color 0.25s ease, box-shadow 0.25s ease;
@@ -204,8 +204,8 @@
     /* 認識圖片 & 一選一：特大置中卡片 */
     .choices-0 .choice-card,
     .choices-1 .choice-card {
-      width: min(68vw, 520px);
-      height: min(64vh, 520px);
+      width: min(64vw, 490px);
+      height: min(58vh, 480px);
     }
 
     .choices-0 .choice-card {
@@ -214,14 +214,14 @@
 
     /* 二選一：左右兩端超大卡片 */
     .choices-2 .choice-card {
-      width: min(41vw, 500px);
-      height: min(62vh, 500px);
+      width: min(41vw, 490px);
+      height: min(56vh, 460px);
     }
 
     /* 三選一：三張分開大卡片（留足間隔空隙） */
     .choices-3 .choice-card {
-      width: min(27vw, 360px);
-      height: min(54vh, 420px);
+      width: min(27vw, 350px);
+      height: min(50vh, 390px);
     }
 
     .choice-card:active {
@@ -248,8 +248,8 @@
     }
 
     .choice-label {
-      margin-top: 12px;
-      font-size: clamp(1.7rem, 3.2vw, 2.7rem);
+      margin-top: 10px;
+      font-size: clamp(1.6rem, 3vw, 2.5rem);
       font-weight: 900;
       color: var(--subtext-color);
       letter-spacing: 2px;
@@ -268,14 +268,14 @@
     .choice-card.learn-active {
       border-color: #00D4FF !important;
       box-shadow: 0 0 36px rgba(0, 212, 255, 0.9);
-      transform: scale(1.03);
+      transform: scale(1.02);
     }
 
     /* 測驗階段答對與錯誤提示狀態 */
     .choice-card.correct-hit {
       border-color: #00FF00 !important;
       box-shadow: 0 0 40px rgba(0, 255, 0, 0.85);
-      transform: scale(1.04);
+      transform: scale(1.03);
       z-index: 15;
     }
 
@@ -299,6 +299,43 @@
         transform: scale(1.03);
         border-color: #00FF00;
       }
+    }
+
+    /* 底部手動「下一題」特大按鈕列 */
+    #next-question-bar {
+      position: fixed;
+      bottom: 16px;
+      left: 0;
+      right: 0;
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 30;
+      pointer-events: none;
+    }
+
+    #next-question-btn {
+      pointer-events: auto;
+      background: #00FF00;
+      color: #000000;
+      border: 4px solid #000000;
+      border-radius: 26px;
+      padding: 14px 48px;
+      font-size: clamp(1.5rem, 3vw, 2.1rem);
+      font-weight: 900;
+      cursor: pointer;
+      box-shadow: 0 6px 26px rgba(0, 255, 0, 0.55);
+      letter-spacing: 2px;
+      animation: nextBtnPop 0.25s ease-out;
+    }
+
+    #next-question-btn:active {
+      transform: scale(0.95);
+    }
+
+    @keyframes nextBtnPop {
+      0% { transform: scale(0.85); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
     }
 
     /* 煙花粒子 */
@@ -1050,6 +1087,11 @@
     <div id="choices-grid" class="choices-0"></div>
   </div>
 
+  <!-- 底部手動「下一題」按鈕列 -->
+  <div id="next-question-bar">
+    <button id="next-question-btn">➡️ 下一題</button>
+  </div>
+
   <!-- 開始畫面：先選學生，再選該學生的 4 個自訂主題 -->
   <div id="start-overlay">
     <h1 style="font-size: 2.3rem; color: #FFFF00; margin: 4px 0 8px 0;">📸 智選小達人</h1>
@@ -1169,27 +1211,36 @@
         </div>
       </div>
 
-      <!-- 4. 畫面色彩對比模式 -->
+      <!-- 4. 每題完成後換題方式 -->
       <div class="setting-group">
-        <label>4. 畫面視覺對比主題</label>
+        <label>4. 每題完成後換題節奏</label>
+        <div class="btn-group" data-setting="manualNext">
+          <button class="opt-btn active" data-val="false">自動換題（停頓約 3 秒後自動跳下一題）</button>
+          <button class="opt-btn" data-val="true">手動按「➡️ 下一題」按鈕（不自動換題，方便課堂停頓講解）</button>
+        </div>
+      </div>
+
+      <!-- 5. 畫面色彩對比模式 -->
+      <div class="setting-group">
+        <label>5. 畫面視覺對比主題</label>
         <div class="btn-group" data-setting="theme">
           <button class="opt-btn active" data-val="dark">深黑高對比背景（減低眩光）</button>
           <button class="opt-btn" data-val="light">亮白高對比背景（一般教室光線）</button>
         </div>
       </div>
 
-      <!-- 5. 答錯輔助提示 -->
+      <!-- 6. 答錯輔助提示 -->
       <div class="setting-group">
-        <label>5. 答錯時視覺引導提示</label>
+        <label>6. 答錯時視覺引導提示</label>
         <div class="btn-group" data-setting="autoHint">
           <button class="opt-btn active" data-val="true">開啟（選錯 1 次後正確相片閃光提示）</button>
           <button class="opt-btn" data-val="false">關閉（僅語音鼓勵再試）</button>
         </div>
       </div>
 
-      <!-- 6. 每回合題數 -->
+      <!-- 7. 每回合題數 -->
       <div class="setting-group">
-        <label>6. 每回合題數（完成後暫停獎勵）</label>
+        <label>7. 每回合題數（完成後暫停獎勵）</label>
         <div class="btn-group" data-setting="roundLimit">
           <button class="opt-btn" data-val="6">每 6 題暫停</button>
           <button class="opt-btn active" data-val="9">每 9 題暫停</button>
@@ -1208,8 +1259,9 @@
   <script>
     // === 多學生檔案 ＋ 每人 4 個自訂主題儲存結構 ===
     // currentChoices: 0 = 認識圖片模式, 1 = 一選一, 2 = 二選一, 3 = 三選一
-    const PROFILES_STORAGE_KEY = 'smart_matcher_profiles_4themes_v1';
-    const ACTIVE_ID_STORAGE_KEY = 'smart_matcher_active_student_4t_v1';
+    const PROFILES_STORAGE_KEY = 'smart_matcher_profiles_4themes_v2';
+    const ACTIVE_ID_STORAGE_KEY = 'smart_matcher_active_student_4t_v2';
+    const LEGACY_PROFILES_KEY = 'smart_matcher_profiles_4themes_v1';
 
     let profiles = [];
     let activeStudentId = '';
@@ -1236,6 +1288,7 @@
           currentChoices: 0,
           streakAtLevel: 0,
           showText: true,
+          manualNext: false, // 預設自動隔 3 秒進入下一題
           theme: 'dark',
           autoHint: true,
           roundLimit: 9
@@ -1260,12 +1313,23 @@
       if (typeof profile.settings.currentChoices !== 'number' || profile.settings.currentChoices < 0) {
         profile.settings.currentChoices = 0;
       }
+      if (typeof profile.settings.manualNext !== 'boolean') {
+        profile.settings.manualNext = false;
+      }
     }
 
     function loadAllProfiles() {
       try {
-        const raw = localStorage.getItem(PROFILES_STORAGE_KEY);
-        if (raw) profiles = JSON.parse(raw);
+        const raw = localStorage.getItem(PROFILES_STORAGE_KEY) || localStorage.getItem(LEGACY_PROFILES_KEY);
+        if (raw) {
+          profiles = JSON.parse(raw);
+          // 遷移舊版資料時預設改為自動隔 3 秒換題
+          if (!localStorage.getItem(PROFILES_STORAGE_KEY) && Array.isArray(profiles)) {
+            profiles.forEach(p => {
+              if (p.settings) p.settings.manualNext = false;
+            });
+          }
+        }
       } catch (e) {
         profiles = [];
       }
@@ -1319,7 +1383,9 @@
       lastTargetId: '',
       learnIndex: 0,
       isLocked: false,
-      isPaused: true
+      isPaused: true,
+      pendingRoundBreak: false,
+      autoAdvanceTimer: null
     };
 
     const choicesGrid = document.getElementById('choices-grid');
@@ -1327,8 +1393,26 @@
     const levelBadge = document.getElementById('level-badge');
     const studentThemeBadge = document.getElementById('student-theme-badge');
     const progressBarContainer = document.getElementById('progress-bar-container');
+    const nextQuestionBar = document.getElementById('next-question-bar');
+    const nextQuestionBtn = document.getElementById('next-question-btn');
 
     loadAllProfiles();
+
+    function clearAutoAdvanceTimer() {
+      if (runtime.autoAdvanceTimer) {
+        clearTimeout(runtime.autoAdvanceTimer);
+        runtime.autoAdvanceTimer = null;
+      }
+    }
+
+    function hideNextButton() {
+      nextQuestionBar.style.display = 'none';
+    }
+
+    function showNextButton(isEndOfRound) {
+      nextQuestionBtn.textContent = isEndOfRound ? '🏆 完成本回合' : '➡️ 下一題';
+      nextQuestionBar.style.display = 'flex';
+    }
 
     // === 套用目前學生的視覺主題與設定按鈕狀態 ===
     function applyActiveProfileSettings() {
@@ -1522,7 +1606,7 @@
     let cantoneseVoice = null;
     let praiseToggle = 0;
     let speechSeqTimers = [];
-    let currentUtteranceRef = null; // 防止 iOS Safari 提前回收 utterance 導致語音中斷
+    let currentUtteranceRef = null;
 
     function loadCantoneseVoice() {
       if (!('speechSynthesis' in window)) return;
@@ -1546,7 +1630,6 @@
       }
     }
 
-    // 單句清晰朗讀（避開 iOS cancel() 後立即 speak() 吞字問題）
     function speakSingleUtterance(text, pitch = 1.12, rate = 0.86) {
       if (!('speechSynthesis' in window) || !text) return;
       if (window.speechSynthesis.paused) {
@@ -1574,7 +1657,6 @@
       speechSeqTimers.push(t);
     }
 
-    // 分段語音佇列：確保「讚賞語」與「名詞」分開獨立發聲，iPad 絕不吞掉名詞
     function speakSequence(segments) {
       clearSpeechQueue();
       let delay = 60;
@@ -1620,6 +1702,8 @@
     // === 產生新一題（包含「階段 0：認識圖片」與「階段 1-3：選辦測驗」） ===
     function generateQuestion() {
       if (runtime.isPaused) return;
+      clearAutoAdvanceTimer();
+      hideNextButton();
 
       const profile = getActiveProfile();
       const activeTheme = getActiveTheme();
@@ -1634,6 +1718,7 @@
       }
 
       runtime.isLocked = false;
+      runtime.pendingRoundBreak = false;
       runtime.isFirstTryThisQuestion = true;
       runtime.wrongAttemptsThisQuestion = 0;
 
@@ -1641,7 +1726,7 @@
         s.currentChoices = Number(s.stageMode);
       }
 
-      // === 模式 A：階段 0「認識圖片」（一按圖片直接讀出該名詞，無讚好語） ===
+      // === 模式 A：階段 0「認識圖片」 ===
       if (s.currentChoices === 0) {
         updateHeaderUI(0);
         const target = items[runtime.learnIndex % items.length];
@@ -1723,9 +1808,18 @@
       });
     }
 
-    // === 處理「認識圖片」階段點擊：直接讀出該圖片名詞，不加讚美語 ===
+    // === 處理「認識圖片」階段點擊：直接讀出該圖片名詞 ===
     function handleLearnCardTap(cardEl, item) {
-      if (runtime.isLocked || runtime.isPaused) return;
+      if (runtime.isPaused) return;
+
+      // 如果已經完成這一張、正停留在畫面上等待換題，再按圖片只會重讀名詞
+      if (runtime.isLocked) {
+        playLearnTapSound();
+        promptBanner.textContent = item.name;
+        speakCantonese(item.name, 1.15);
+        return;
+      }
+
       runtime.isLocked = true;
 
       const profile = getActiveProfile();
@@ -1735,7 +1829,6 @@
       playLearnTapSound();
       if (navigator.vibrate) navigator.vibrate(50);
 
-      // 畫面與語音都直接呈現純粹的名詞本身
       promptBanner.textContent = item.name;
       speakCantonese(item.name, 1.15);
 
@@ -1752,24 +1845,43 @@
       updateHeaderUI();
       updateStatsUI();
 
-      // 留足 2.1 秒確保名詞完整播完才進入下一張
-      if (s.roundLimit > 0 && runtime.roundCompleted >= s.roundLimit) {
-        setTimeout(showRoundBreak, 2100);
+      const isEndOfRound = (s.roundLimit > 0 && runtime.roundCompleted >= s.roundLimit);
+      runtime.pendingRoundBreak = isEndOfRound;
+
+      if (s.manualNext) {
+        // 手動模式：只顯示「下一題」按鈕，不自動換題
+        showNextButton(isEndOfRound);
       } else {
-        setTimeout(generateQuestion, 2100);
+        // 自動模式（預設）：停頓約 3 秒後自動跳下一題
+        runtime.autoAdvanceTimer = setTimeout(() => {
+          if (isEndOfRound) {
+            showRoundBreak();
+          } else {
+            generateQuestion();
+          }
+        }, 3200);
       }
     }
 
-    // === 處理「選辦測驗」階段點擊卡片：分段讀出讚賞 + 名詞，確保 iPad 完整讀出 ===
+    // === 處理「選辦測驗」階段點擊卡片 ===
     function handleChoiceClick(cardEl, chosenItem) {
-      if (runtime.isLocked || runtime.isPaused) return;
+      if (runtime.isPaused) return;
+
+      // 已經答對、正停留在畫面上等待換題時，再點選正確圖片可重讀名詞
+      if (runtime.isLocked) {
+        if (runtime.targetItem && chosenItem.id === runtime.targetItem.id) {
+          speakCantonese(chosenItem.name, 1.15);
+        }
+        return;
+      }
+
       if (cardEl.classList.contains('wrong-dimmed')) return;
 
       const profile = getActiveProfile();
       const s = profile.settings;
 
       if (chosenItem.id === runtime.targetItem.id) {
-        // 揀啱咗：先讚賞，獨立停頓後清晰大聲讀出該圖片名詞
+        // 揀啱咗
         runtime.isLocked = true;
         cardEl.classList.remove('hint-pulse');
         cardEl.classList.add('correct-hit');
@@ -1797,7 +1909,6 @@
         praiseToggle += 1;
 
         promptBanner.textContent = `${praiseWord} ${chosenItem.name}`;
-        // 使用分段佇列：先講讚賞語，再獨立清晰讀出圖片名詞
         speakSequence([
           { text: praiseWord, pitch: 1.18, rate: 0.92, pauseAfter: 900 },
           { text: chosenItem.name, pitch: 1.15, rate: 0.82, pauseAfter: 1200 }
@@ -1812,14 +1923,24 @@
         updateHeaderUI();
         updateStatsUI();
 
-        // 留足 2.7 秒讓讚賞與名詞都完整播完才轉下一題
-        if (s.roundLimit > 0 && runtime.roundCompleted >= s.roundLimit) {
-          setTimeout(showRoundBreak, 2600);
+        const isEndOfRound = (s.roundLimit > 0 && runtime.roundCompleted >= s.roundLimit);
+        runtime.pendingRoundBreak = isEndOfRound;
+
+        if (s.manualNext) {
+          // 手動模式：只顯示「下一題」按鈕，不自動換題
+          showNextButton(isEndOfRound);
         } else {
-          setTimeout(generateQuestion, 2700);
+          // 自動模式（預設）：停頓約 3 秒後自動跳下一題
+          runtime.autoAdvanceTimer = setTimeout(() => {
+            if (isEndOfRound) {
+              showRoundBreak();
+            } else {
+              generateQuestion();
+            }
+          }, 3400);
         }
       } else {
-        // 揀錯咗：分段先讀出所按圖片名詞，再提醒目標名詞
+        // 揀錯咗
         runtime.isFirstTryThisQuestion = false;
         runtime.wrongAttemptsThisQuestion += 1;
         s.streakAtLevel = 0;
@@ -1839,6 +1960,18 @@
         }
       }
     }
+
+    // 點擊「下一題 / 完成本回合」按鈕
+    nextQuestionBtn.addEventListener('click', () => {
+      initAudio();
+      clearAutoAdvanceTimer();
+      hideNextButton();
+      if (runtime.pendingRoundBreak) {
+        showRoundBreak();
+      } else {
+        generateQuestion();
+      }
+    });
 
     function spawnCelebrationParticles(cx, cy) {
       const colors = ['#FFFF00', '#00FF00', '#FF3366', '#00D4FF'];
@@ -1872,8 +2005,7 @@
       initAudio();
       if (runtime.targetItem && !runtime.isPaused) {
         const s = getActiveProfile().settings;
-        if (s.currentChoices === 0) {
-          promptBanner.textContent = runtime.targetItem.name;
+        if (s.currentChoices === 0 || runtime.isLocked) {
           speakCantonese(runtime.targetItem.name, 1.15);
         } else {
           speakCantonese(`邊個係${runtime.targetItem.name}呀？`, 1.12);
@@ -1888,6 +2020,7 @@
     // === 回合結束休息獎勵畫面 ===
     function showRoundBreak() {
       runtime.isPaused = true;
+      hideNextButton();
       playFanfareSound();
       const profile = getActiveProfile();
       const activeTheme = getActiveTheme();
@@ -2288,6 +2421,7 @@
 
     function openTeacherPanel() {
       runtime.isPaused = true;
+      clearAutoAdvanceTimer();
       clearSpeechQueue();
       applyActiveProfileSettings();
       renderProfileTabsInPanel();
@@ -2322,7 +2456,7 @@
           if (settingKey === 'roundLimit') {
             val = Number(val);
             runtime.roundCompleted = 0;
-          } else if (settingKey === 'showText' || settingKey === 'autoHint') {
+          } else if (settingKey === 'showText' || settingKey === 'autoHint' || settingKey === 'manualNext') {
             val = (val === 'true');
           } else if (settingKey === 'stageMode') {
             if (val !== 'auto') {
@@ -2386,7 +2520,6 @@
     document.getElementById('start-btn').addEventListener('click', () => {
       initAudio();
       loadCantoneseVoice();
-      // iOS Safari 首次手勢解鎖語音引擎
       if ('speechSynthesis' in window) {
         const unlockUtter = new SpeechSynthesisUtterance('');
         window.speechSynthesis.speak(unlockUtter);
